@@ -1,783 +1,387 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="robots" content="noindex,nofollow" />
-  <meta name="author" content="@toucabr" />
-  <meta name="copyright" content="Mundo Mágico - @toucabr - Edu Dok" />
-  <title>Mundo Mágico • Painel ADM</title>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Mundo Mágico • ADM Diagnóstico</title>
   <style>
     :root{
-      --bg:#090914;
-      --panel:#151525;
-      --panel2:#1d1d31;
-      --line:rgba(255,255,255,.11);
-      --text:#f7f2ff;
-      --muted:#bdb1d2;
-      --primary:#8a5cff;
-      --primary2:#5f9cff;
-      --danger:#ff4f6d;
-      --warn:#ffb84d;
-      --ok:#33d17a;
-      --shadow:0 18px 60px rgba(0,0,0,.36);
-      --radius:22px;
+      --bg:#080812;--card:#161629;--card2:#20203a;--line:rgba(255,255,255,.13);
+      --text:#f8f5ff;--muted:#bfb4d7;--pri:#8b5cff;--blue:#5f9cff;
+      --red:#ff4f6d;--orange:#ff9c42;--green:#38d47f;
     }
-
     *{box-sizing:border-box}
     body{
-      margin:0;
-      min-height:100vh;
-      font-family:Inter,Arial,Helvetica,sans-serif;
-      background:
-        radial-gradient(circle at 20% -10%, rgba(138,92,255,.34), transparent 36%),
-        radial-gradient(circle at 90% 10%, rgba(95,156,255,.22), transparent 34%),
-        linear-gradient(180deg,#0c0718,#090914 45%,#05050b);
-      color:var(--text);
-      padding:18px;
-    }
-
-    .hiddenMark{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-    .wrap{max-width:1220px;margin:auto}
-    .hero{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:16px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .logo{
-      width:52px;height:52px;border-radius:18px;
-      display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--primary),var(--primary2));
-      box-shadow:0 12px 30px rgba(138,92,255,.32);
-      font-size:26px;
-    }
-    h1{font-size:24px;margin:0;letter-spacing:-.02em}
-    .sub{color:var(--muted);font-size:13px;margin-top:3px}
-    .card{
-      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.045));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
+      margin:0;min-height:100vh;color:var(--text);font-family:Arial,Helvetica,sans-serif;
+      background:radial-gradient(circle at top left,rgba(139,92,255,.35),transparent 35%),
+      radial-gradient(circle at top right,rgba(95,156,255,.22),transparent 35%),linear-gradient(180deg,#0d0820,#080812);
       padding:16px;
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(14px);
+    }
+    .wrap{max-width:1180px;margin:auto}
+    .center{min-height:90vh;display:grid;place-items:center}
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+      border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 18px 60px rgba(0,0,0,.35);
       margin-bottom:14px;
     }
-    .loginCard{
-      min-height:70vh;
-      display:grid;
-      place-items:center;
-    }
-    .loginBox{
-      width:min(460px,100%);
-      text-align:center;
-      padding:28px;
-    }
-    .loginBox h2{font-size:28px;margin:12px 0 8px}
-    .loginBox p{color:var(--muted);line-height:1.45}
+    .login{width:min(560px,100%);text-align:center;padding:28px}
+    .logo{width:58px;height:58px;border-radius:20px;margin:auto;display:grid;place-items:center;font-size:30px;background:linear-gradient(135deg,var(--pri),var(--blue))}
+    h1,h2{margin:12px 0 8px}
+    p{color:var(--muted);line-height:1.45}
     button{
-      border:0;
-      border-radius:15px;
-      padding:12px 15px;
-      font-weight:900;
-      color:#fff;
-      background:linear-gradient(135deg,var(--primary),var(--primary2));
-      cursor:pointer;
-      transition:.16s transform,.16s opacity,.16s filter;
-      box-shadow:0 10px 26px rgba(95,156,255,.18);
+      border:0;border-radius:15px;padding:12px 15px;color:white;font-weight:900;cursor:pointer;margin:4px;
+      background:linear-gradient(135deg,var(--pri),var(--blue));
     }
-    button:hover{transform:translateY(-1px);filter:brightness(1.04)}
-    button:active{transform:translateY(1px) scale(.99)}
-    button:disabled{opacity:.45;cursor:not-allowed;transform:none}
-    button.red{background:linear-gradient(135deg,#ff3e68,#c81d42)}
-    button.orange{background:linear-gradient(135deg,#ff9e42,#ff6a2a)}
-    button.gray{background:linear-gradient(135deg,#3b3850,#262438)}
-    button.green{background:linear-gradient(135deg,#27c16f,#139650)}
-    .row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-    .right{justify-content:flex-end}
-    .spacer{flex:1}
-    .account{
-      display:flex;align-items:center;gap:10px;
-      color:var(--muted);font-size:12px;
-      background:rgba(255,255,255,.06);
-      border:1px solid var(--line);
-      padding:8px 10px;border-radius:999px;
-      max-width:100%;
-    }
-    .account img{width:28px;height:28px;border-radius:50%}
-    .account span{max-width:210px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:12px;
-      margin-bottom:14px;
-    }
-    .stat{
-      background:rgba(0,0,0,.22);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-    }
-    .stat .label{font-size:12px;color:var(--muted)}
-    .stat b{display:block;font-size:30px;margin-top:6px;letter-spacing:-.04em}
-    input,select{
-      width:100%;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.24);
-      color:var(--text);
-      border-radius:14px;
-      padding:12px;
-      outline:none;
-    }
-    select option{background:#121222;color:white}
-    .tools{
-      display:grid;
-      grid-template-columns:1.5fr .7fr .7fr;
-      gap:10px;
-      align-items:center;
-    }
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{
-      padding:10px 8px;
-      border-bottom:1px solid var(--line);
-      text-align:left;
-      vertical-align:middle;
-    }
-    th{color:#dbcfff;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
-    code{color:#d8cdfd;font-size:12px}
-    .pill{
-      display:inline-block;border-radius:999px;padding:4px 8px;
-      font-size:11px;font-weight:900;
-      background:rgba(255,255,255,.1);
-    }
-    .pill.on{background:rgba(51,209,122,.16);color:#8cffbd}
-    .pill.off{background:rgba(255,79,109,.14);color:#ff9aaa}
-    .pill.warn{background:rgba(255,184,77,.14);color:#ffd28b}
-    .split{display:grid;grid-template-columns:1.08fr .92fr;gap:14px}
-    .scroll{overflow:auto;max-height:520px}
-    .empty{color:var(--muted);padding:14px}
-    .notice{color:var(--muted);font-size:13px;line-height:1.45}
-    .statusLine{font-size:13px;color:var(--muted)}
-    .errorBox{
-      background:rgba(255,79,109,.12);
-      border:1px solid rgba(255,79,109,.25);
-      color:#ffd2da;
-      border-radius:16px;
-      padding:12px;
-      margin-top:12px;
-      display:none;
-      text-align:left;
-      font-size:13px;
-      line-height:1.45;
-    }
-    .toast{
-      position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);
-      background:#18182a;border:1px solid var(--line);border-radius:16px;
-      padding:12px 14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;
-      transition:.18s;z-index:10;
-    }
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    @media(max-width:900px){
-      body{padding:12px}
-      .hero{align-items:flex-start}
-      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .tools{grid-template-columns:1fr}
-      .split{grid-template-columns:1fr}
-      .account span{max-width:135px}
-      th:nth-child(3),td:nth-child(3){display:none}
-    }
-    @media(max-width:520px){
-      h1{font-size:20px}
-      .logo{width:46px;height:46px}
-      .grid{grid-template-columns:1fr 1fr}
-      .stat b{font-size:25px}
-      .hero{display:block}
-      .hero>.row{margin-top:12px}
-      th,td{padding:9px 6px}
-    }
+    button.red{background:linear-gradient(135deg,#ff4f6d,#be1d41)}
+    button.orange{background:linear-gradient(135deg,#ff9c42,#ff7028)}
+    button.gray{background:linear-gradient(135deg,#3a3652,#252338)}
+    button.green{background:linear-gradient(135deg,#38d47f,#149a51)}
+    input,select{width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:white}
+    .debug{font-family:monospace;text-align:left;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:14px;color:#d9d2ff;font-size:12px;white-space:pre-wrap;overflow:auto;max-height:220px}
+    .err{background:rgba(255,79,109,.13);border:1px solid rgba(255,79,109,.35);color:#ffd1dc}
+    .ok{color:#7dffb2}.bad{color:#ff9aaa}.muted{color:var(--muted)}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .stat{background:rgba(0,0,0,.24);border:1px solid var(--line);border-radius:18px;padding:14px}
+    .stat span{font-size:12px;color:var(--muted)}.stat b{display:block;font-size:30px;margin-top:4px}
+    .tools{display:grid;grid-template-columns:1.5fr .7fr .7fr;gap:10px}
+    table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left}
+    th{color:#dacfff;text-transform:uppercase;font-size:11px;letter-spacing:.05em}
+    code{color:#dcd3ff}.scroll{overflow:auto;max-height:520px}.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .pill{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900}
+    .on{background:rgba(56,212,127,.15);color:#8dffbd}.off{background:rgba(255,79,109,.14);color:#ff9aaa}.warn{background:rgba(255,156,66,.14);color:#ffd098}
+    @media(max-width:900px){.grid{grid-template-columns:1fr 1fr}.tools,.split{grid-template-columns:1fr}th:nth-child(3),td:nth-child(3){display:none}}
   </style>
 </head>
+<body>
+<div id="loginView" class="center">
+  <div class="card login">
+    <div class="logo">🛡️</div>
+    <h1>Mundo Mágico ADM</h1>
+    <p>Painel privado com diagnóstico de login. Use primeiro o login por redirecionamento.</p>
+    <button id="loginRedirectBtn">Entrar com Google</button>
+    <button id="loginPopupBtn" class="orange">Tentar popup alternativo</button>
+    <button id="clearBtn" class="gray">Limpar sessão</button>
+    <div id="loginMsg" class="debug">Status: aguardando...</div>
+  </div>
+</div>
 
-<body data-owner="@toucabr">
-  <div class="hiddenMark">MUNDO_MAGICO_ADMIN_PANEL__TOUCABR__EDU_DOK__2026__PRIVATE</div>
+<div id="deniedView" class="center" style="display:none">
+  <div class="card login">
+    <div class="logo">⛔</div>
+    <h1>Acesso negado</h1>
+    <p>A conta Google entrou, mas o UID não está liberado em <b>/admins/UID = true</b>.</p>
+    <div id="deniedDebug" class="debug err"></div>
+    <button id="deniedLogoutBtn" class="gray">Sair e trocar conta</button>
+  </div>
+</div>
 
-  <div id="loginView" class="wrap loginCard" style="display:none">
-    <div class="card loginBox">
-      <div class="logo" style="margin:auto">🛡️</div>
-      <h2>Mundo Mágico ADM</h2>
-      <p>Painel privado para gerenciar jogadores, nicks, presença online e salas travadas.</p>
-      <button id="loginBtn">Entrar com Google</button>
-      <div id="loginError" class="errorBox"></div>
-      <p class="notice" style="margin-top:14px">
-        Use a conta Google autorizada em <b>/admins/seuUID = true</b>.
-      </p>
+<div id="appView" class="wrap" style="display:none">
+  <div class="top">
+    <div class="row">
+      <div class="logo" style="margin:0">🛡️</div>
+      <div>
+        <h2 style="margin:0">Mundo Mágico ADM</h2>
+        <div class="muted">Painel separado do jogo • login Google validado</div>
+      </div>
+    </div>
+    <div class="row">
+      <span id="accountLabel" class="muted"></span>
+      <button id="refreshBtn" class="gray">Atualizar</button>
+      <button id="logoutBtn" class="red">Sair</button>
     </div>
   </div>
 
-  <div id="deniedView" class="wrap loginCard" style="display:none">
-    <div class="card loginBox">
-      <div class="logo" style="margin:auto">⛔</div>
-      <h2>Acesso negado</h2>
-      <p>Esta conta Google não está cadastrada como ADM no Firebase.</p>
-      <p class="notice">UID detectado: <code id="deniedUid"></code></p>
-      <button id="logoutDeniedBtn" class="gray">Sair e trocar conta</button>
+  <div class="grid">
+    <div class="stat"><span>Online real</span><b id="sOnline">0</b></div>
+    <div class="stat"><span>Online fantasma</span><b id="sGhost">0</b></div>
+    <div class="stat"><span>Nicks registrados</span><b id="sNicks">0</b></div>
+    <div class="stat"><span>Salas abertas</span><b id="sRooms">0</b></div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button id="cleanGhostBtn" class="orange">Limpar online fantasma +10min</button>
+      <button id="cleanInvitesBtn" class="orange">Limpar convites +24h</button>
+      <button id="clean10Btn" class="red">Apagar inativos +10 dias</button>
+      <button id="cleanRoomsBtn" class="red">Apagar salas +24h</button>
+    </div>
+    <p id="lastUpdate" class="muted">Aguardando atualização...</p>
+  </div>
+
+  <div class="card">
+    <div class="tools">
+      <input id="searchBox" placeholder="Buscar nick, UID ou sala...">
+      <select id="statusFilter"><option value="all">Todos</option><option value="online">Online</option><option value="ghost">Fantasma</option><option value="offline">Offline</option></select>
+      <select id="sortMode"><option value="recent">Mais recentes</option><option value="old">Mais antigos</option><option value="nick">Nick A-Z</option></select>
     </div>
   </div>
 
-  <div id="loadingView" class="wrap loginCard">
-    <div class="card loginBox">
-      <div class="logo" style="margin:auto">✨</div>
-      <h2>Carregando painel...</h2>
-      <p>Verificando login e permissão ADM.</p>
-    </div>
+  <div class="split">
+    <div class="card"><h2>Jogadores</h2><div class="scroll"><table><thead><tr><th>Status</th><th>Nick</th><th>UID</th><th>Última</th><th>Ações</th></tr></thead><tbody id="playersBody"></tbody></table></div></div>
+    <div class="card"><h2>Nicks</h2><div class="scroll"><table><thead><tr><th>Nick</th><th>Dono</th><th>Estado</th><th>Ações</th></tr></thead><tbody id="nicksBody"></tbody></table></div></div>
   </div>
 
-  <main id="appView" class="wrap" style="display:none">
-    <section class="hero">
-      <div class="brand">
-        <div class="logo">🛡️</div>
-        <div>
-          <h1>Mundo Mágico ADM</h1>
-          <div class="sub">Painel separado do jogo • limpeza e monitoramento</div>
-        </div>
-      </div>
-
-      <div class="row right">
-        <div class="account">
-          <img id="userPhoto" alt="" style="display:none">
-          <span id="userEmail">Conta ADM</span>
-        </div>
-        <button id="refreshBtn" class="gray">Atualizar</button>
-        <button id="logoutBtn" class="red">Sair</button>
-      </div>
-    </section>
-
-    <section class="grid">
-      <div class="stat"><span class="label">Online real</span><b id="sOnline">0</b></div>
-      <div class="stat"><span class="label">Online fantasma</span><b id="sGhost">0</b></div>
-      <div class="stat"><span class="label">Nicks registrados</span><b id="sNicks">0</b></div>
-      <div class="stat"><span class="label">Salas abertas</span><b id="sRooms">0</b></div>
-    </section>
-
-    <section class="card">
-      <div class="row">
-        <div>
-          <h2 style="margin:0 0 4px">Limpeza segura</h2>
-          <div class="statusLine" id="lastUpdate">Aguardando atualização...</div>
-        </div>
-        <div class="spacer"></div>
-        <button class="orange" id="cleanGhostBtn">Limpar online fantasma +10min</button>
-        <button class="orange" id="cleanInvitesBtn">Limpar convites +24h</button>
-        <button class="red" id="clean10Btn">Apagar inativos +10 dias</button>
-        <button class="red" id="cleanRoomsBtn">Apagar salas +24h</button>
-      </div>
-      <p class="notice">
-        As ações usam o UID autenticado e dependem das regras Firebase. O painel atualiza automaticamente a cada 15 segundos.
-      </p>
-    </section>
-
-    <section class="card">
-      <div class="tools">
-        <input id="searchBox" placeholder="Buscar nick, UID ou sala..." />
-        <select id="statusFilter">
-          <option value="all">Todos</option>
-          <option value="online">Somente online</option>
-          <option value="ghost">Online fantasma</option>
-          <option value="offline">Offline</option>
-        </select>
-        <select id="sortMode">
-          <option value="recent">Mais recentes</option>
-          <option value="old">Mais antigos</option>
-          <option value="nick">Nick A-Z</option>
-        </select>
-      </div>
-    </section>
-
-    <section class="split">
-      <div class="card">
-        <h2>Jogadores / presença</h2>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr><th>Status</th><th>Nick</th><th>UID</th><th>Última atividade</th><th>Ações</th></tr>
-            </thead>
-            <tbody id="playersBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Nicks registrados</h2>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr><th>Nick</th><th>Dono</th><th>Estado</th><th>Ações</th></tr>
-            </thead>
-            <tbody id="nicksBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Salas</h2>
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr><th>Sala</th><th>Host</th><th>Jogadores</th><th>Atualizada</th><th>Ações</th></tr>
-          </thead>
-          <tbody id="roomsBody"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <div id="toast" class="toast"></div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithRedirect,
-      getRedirectResult,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      get,
-      update,
-      remove,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBZvxl3BKYS4WIA0Ov1xQ7xLwLRrJm7SwU",
-      authDomain: "mundo-magico-online.firebaseapp.com",
-      databaseURL: "https://mundo-magico-online-default-rtdb.firebaseio.com",
-      projectId: "mundo-magico-online",
-      storageBucket: "mundo-magico-online.firebasestorage.app",
-      messagingSenderId: "495535078197",
-      appId: "1:495535078197:web:6f86b82c22f3492e802a7c"
-    };
-
-    const MARK = "MUNDO_MAGICO_ADMIN__@toucabr__EDU_DOK__2026";
-    const ONLINE_LIMIT = 10 * 60 * 1000;
-    const INACTIVE_LIMIT = 10 * 24 * 60 * 60 * 1000;
-    const OLD_LIMIT = 24 * 60 * 60 * 1000;
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-    const provider = new GoogleAuthProvider();
-
-    let currentUser = null;
-    let isAdmin = false;
-    let state = { players: {}, nicks: {}, rooms: {} };
-    let timer = null;
-
-    const $ = (id) => document.getElementById(id);
-    const now = () => Date.now();
-    const social = (path) => ref(db, "rooms/_social/" + path);
-
-    function show(view) {
-      ["loginView","deniedView","loadingView","appView"].forEach(id => {
-        $(id).style.display = id === view ? (id === "appView" ? "block" : "grid") : "none";
-      });
-    }
-
-    function toast(msg) {
-      const el = $("toast");
-      el.textContent = msg;
-      el.classList.add("show");
-      setTimeout(() => el.classList.remove("show"), 2400);
-    }
-
-    function showLoginError(msg) {
-      const el = $("loginError");
-      el.style.display = "block";
-      el.innerHTML = msg;
-    }
-
-    function esc(v) {
-      return String(v ?? "").replace(/[&<>"]/g, m => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;"
-      }[m]));
-    }
-
-    function age(ts) {
-      if (!ts) return "sem data";
-      const d = Math.max(0, now() - Number(ts));
-      const m = Math.floor(d / 60000);
-      if (m < 60) return m + " min";
-      const h = Math.floor(m / 60);
-      if (h < 48) return h + " h";
-      return Math.floor(h / 24) + " dias";
-    }
-
-    function isFresh(v) {
-      return !!(v && v.online && now() - (+v.lastSeen || 0) < ONLINE_LIMIT);
-    }
-
-    function isGhost(v) {
-      return !!(v && v.online && now() - (+v.lastSeen || 0) >= ONLINE_LIMIT);
-    }
-
-    $("loginBtn").onclick = async () => {
-      showLoginError("");
-      try {
-        await signInWithRedirect(auth, provider);
-      } catch (err) {
-        console.error(err);
-        showLoginError("Erro ao iniciar login: " + esc(err.message || err.code));
-      }
-    };
-
-    $("logoutBtn").onclick = () => signOut(auth);
-    $("logoutDeniedBtn").onclick = () => signOut(auth);
-    $("refreshBtn").onclick = () => loadAll(true);
-
-    $("searchBox").oninput = render;
-    $("statusFilter").onchange = render;
-    $("sortMode").onchange = render;
-
-    async function checkAdmin(uid) {
-      const snap = await get(ref(db, "admins/" + uid));
-      return snap.exists() && snap.val() === true;
-    }
-
-    async function startApp(user) {
-      currentUser = user;
-      isAdmin = await checkAdmin(user.uid);
-
-      if (!isAdmin) {
-        $("deniedUid").textContent = user.uid;
-        show("deniedView");
-        return;
-      }
-
-      $("userEmail").textContent = user.email || user.uid;
-      if (user.photoURL) {
-        $("userPhoto").src = user.photoURL;
-        $("userPhoto").style.display = "block";
-      }
-
-      show("appView");
-      await loadAll(true);
-
-      if (timer) clearInterval(timer);
-      timer = setInterval(() => loadAll(false), 15000);
-    }
-
-    async function loadAll(noisy = false) {
-      if (!isAdmin) return;
-
-      const [playersSnap, nicksSnap, roomsSnap] = await Promise.all([
-        get(social("playersOnline")),
-        get(social("nicks")),
-        get(ref(db, "rooms"))
-      ]);
-
-      state.players = playersSnap.val() || {};
-      state.nicks = nicksSnap.val() || {};
-
-      const rooms = roomsSnap.val() || {};
-      delete rooms._social;
-      state.rooms = rooms;
-
-      $("lastUpdate").textContent = "Última atualização: " + new Date().toLocaleTimeString();
-      render();
-
-      if (noisy) toast("Painel atualizado");
-    }
-
-    function render() {
-      const players = Object.values(state.players);
-      $("sOnline").textContent = players.filter(isFresh).length;
-      $("sGhost").textContent = players.filter(isGhost).length;
-      $("sNicks").textContent = Object.keys(state.nicks).length;
-      $("sRooms").textContent = Object.keys(state.rooms).length;
-
-      renderPlayers();
-      renderNicks();
-      renderRooms();
-    }
-
-    function queryMatch(text) {
-      const q = $("searchBox").value.trim().toLowerCase();
-      return !q || String(text).toLowerCase().includes(q);
-    }
-
-    function renderPlayers() {
-      const filter = $("statusFilter").value;
-      const sort = $("sortMode").value;
-
-      let entries = Object.entries(state.players).filter(([id, v]) => {
-        const txt = id + " " + (v?.nick || "") + " " + (v?.nickKey || "");
-        if (!queryMatch(txt)) return false;
-        if (filter === "online") return isFresh(v);
-        if (filter === "ghost") return isGhost(v);
-        if (filter === "offline") return !isFresh(v) && !isGhost(v);
-        return true;
-      });
-
-      entries.sort((a,b) => {
-        const av = a[1] || {}, bv = b[1] || {};
-        if (sort === "old") return (+av.lastSeen || 0) - (+bv.lastSeen || 0);
-        if (sort === "nick") return String(av.nick || "").localeCompare(String(bv.nick || ""));
-        return (+bv.lastSeen || 0) - (+av.lastSeen || 0);
-      });
-
-      $("playersBody").innerHTML = entries.map(([id,v]) => {
-        v = v || {};
-        const fresh = isFresh(v);
-        const ghost = isGhost(v);
-        const pill = fresh ? "on" : ghost ? "warn" : "off";
-        const label = fresh ? "ON" : ghost ? "FANTASMA" : "OFF";
-
-        return `
-          <tr>
-            <td><span class="pill ${pill}">${label}</span></td>
-            <td>${esc(v.nick || "sem nick")}</td>
-            <td><code>${esc(id)}</code></td>
-            <td>${age(v.lastSeen)}</td>
-            <td>
-              <div class="row">
-                <button class="orange" onclick="setOffline('${esc(id)}')">OFF</button>
-                <button class="red" onclick="deletePlayer('${esc(id)}','${esc(v.nickKey || "")}')">Apagar</button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join("") || `<tr><td colspan="5"><div class="empty">Nenhum jogador encontrado.</div></td></tr>`;
-    }
-
-    function renderNicks() {
-      const entries = Object.entries(state.nicks)
-        .filter(([k,v]) => queryMatch(k + " " + v))
-        .sort((a,b) => a[0].localeCompare(b[0]));
-
-      $("nicksBody").innerHTML = entries.map(([nick, uid]) => {
-        const p = state.players[uid];
-        const st = p ? "lastSeen: " + age(p.lastSeen) : "órfão/sem presença";
-
-        return `
-          <tr>
-            <td>${esc(nick)}</td>
-            <td><code>${esc(uid)}</code></td>
-            <td>${esc(st)}</td>
-            <td><button class="red" onclick="deleteNick('${esc(nick)}')">Liberar</button></td>
-          </tr>
-        `;
-      }).join("") || `<tr><td colspan="4"><div class="empty">Nenhum nick encontrado.</div></td></tr>`;
-    }
-
-    function renderRooms() {
-      const entries = Object.entries(state.rooms)
-        .filter(([room,v]) => queryMatch(room + " " + (v?.meta?.host || "") + " " + (v?.meta?.hostAuthUid || "")))
-        .sort((a,b) => (+b[1]?.meta?.updated || 0) - (+a[1]?.meta?.updated || 0));
-
-      $("roomsBody").innerHTML = entries.map(([room,v]) => {
-        const meta = v?.meta || {};
-        const players = Object.keys(v?.players || {}).length;
-
-        return `
-          <tr>
-            <td><b>${esc(room)}</b></td>
-            <td>${esc(meta.host || meta.hostAuthUid || "sem host")}</td>
-            <td>${players}</td>
-            <td>${age(meta.updated)}</td>
-            <td><button class="red" onclick="deleteRoom('${esc(room)}')">Apagar</button></td>
-          </tr>
-        `;
-      }).join("") || `<tr><td colspan="5"><div class="empty">Nenhuma sala encontrada.</div></td></tr>`;
-    }
-
-    function guard(text = "Confirmar ação ADM?") {
-      if (!isAdmin) {
-        alert("UID sem permissão ADM.");
-        return false;
-      }
-      return confirm(text);
-    }
-
-    async function setOffline(id) {
-      if (!guard("Marcar este jogador como offline?")) return;
-      await update(social("playersOnline/" + id), {
-        online: false,
-        lastSeen: serverTimestamp(),
-        adminMark: MARK
-      });
-      await loadAll(true);
-    }
-
-    async function deleteNick(nick) {
-      if (!guard("Liberar este nick?")) return;
-      await remove(social("nicks/" + nick));
-      await loadAll(true);
-    }
-
-    async function deletePlayer(id, nickKey) {
-      if (!guard("Apagar jogador e registros sociais ligados a ele?")) return;
-
-      const updates = {};
-      updates["rooms/_social/playersOnline/" + id] = null;
-      if (nickKey) updates["rooms/_social/nicks/" + nickKey] = null;
-      updates["rooms/_social/friends/" + id] = null;
-      updates["rooms/_social/friendRequests/" + id] = null;
-      updates["rooms/_social/roomInvites/" + id] = null;
-
-      Object.keys(state.players).forEach(other => {
-        updates["rooms/_social/friends/" + other + "/" + id] = null;
-        updates["rooms/_social/friendRequests/" + other + "/" + id] = null;
-      });
-
-      updates["rooms/_adminLogs/" + currentUser.uid + "/" + Date.now()] = {
-        action: "deletePlayer",
-        target: id,
-        mark: MARK,
-        at: Date.now()
-      };
-
-      await update(ref(db), updates);
-      await loadAll(true);
-    }
-
-    async function deleteRoom(room) {
-      if (!guard("Apagar esta sala travada?")) return;
-      await remove(ref(db, "rooms/" + room));
-      await loadAll(true);
-    }
-
-    async function cleanGhost() {
-      if (!guard("Limpar online fantasma com mais de 10 minutos?")) return;
-
-      const updates = {};
-      Object.entries(state.players).forEach(([id,v]) => {
-        if (isGhost(v)) {
-          updates["rooms/_social/playersOnline/" + id + "/online"] = false;
-          updates["rooms/_social/playersOnline/" + id + "/adminMark"] = MARK;
-        }
-      });
-
-      await update(ref(db), updates);
-      await loadAll(true);
-      toast("Online fantasma limpo: " + Object.keys(updates).length);
-    }
-
-    async function clean10() {
-      if (!guard("Apagar inativos há mais de 10 dias e liberar nicks?")) return;
-
-      const limit = now() - INACTIVE_LIMIT;
-      const updates = {};
-
-      Object.entries(state.players).forEach(([id,v]) => {
-        if ((+v?.lastSeen || 0) && (+v.lastSeen) < limit) {
-          updates["rooms/_social/playersOnline/" + id] = null;
-          if (v.nickKey) updates["rooms/_social/nicks/" + v.nickKey] = null;
-          updates["rooms/_social/friends/" + id] = null;
-          updates["rooms/_social/friendRequests/" + id] = null;
-          updates["rooms/_social/roomInvites/" + id] = null;
-
-          Object.keys(state.players).forEach(other => {
-            updates["rooms/_social/friends/" + other + "/" + id] = null;
-            updates["rooms/_social/friendRequests/" + other + "/" + id] = null;
-          });
-        }
-      });
-
-      await update(ref(db), updates);
-      await loadAll(true);
-      toast("Registros alterados: " + Object.keys(updates).length);
-    }
-
-    async function cleanInvites() {
-      if (!guard("Limpar convites e pedidos antigos com mais de 24h?")) return;
-
-      const socialSnap = await get(ref(db, "rooms/_social"));
-      const s = socialSnap.val() || {};
-      const limit = now() - OLD_LIMIT;
-      const updates = {};
-
-      ["roomInvites","friendRequests"].forEach(path => {
-        Object.entries(s[path] || {}).forEach(([uid,box]) => {
-          Object.entries(box || {}).forEach(([id,v]) => {
-            if ((+v?.time || +v?.t || 0) < limit) {
-              updates["rooms/_social/" + path + "/" + uid + "/" + id] = null;
-            }
-          });
-        });
-      });
-
-      await update(ref(db), updates);
-      await loadAll(true);
-      toast("Convites/pedidos removidos: " + Object.keys(updates).length);
-    }
-
-    async function cleanRooms() {
-      if (!guard("Apagar salas sem atualização há mais de 24h?")) return;
-
-      const limit = now() - OLD_LIMIT;
-      const updates = {};
-
-      Object.entries(state.rooms).forEach(([room,v]) => {
-        if (((+v?.meta?.updated || 0) && (+v.meta.updated) < limit) || !v?.meta?.updated) {
-          updates["rooms/" + room] = null;
-        }
-      });
-
-      await update(ref(db), updates);
-      await loadAll(true);
-      toast("Salas removidas: " + Object.keys(updates).length);
-    }
-
-    window.setOffline = setOffline;
-    window.deleteNick = deleteNick;
-    window.deletePlayer = deletePlayer;
-    window.deleteRoom = deleteRoom;
-
-    $("cleanGhostBtn").onclick = cleanGhost;
-    $("clean10Btn").onclick = clean10;
-    $("cleanInvitesBtn").onclick = cleanInvites;
-    $("cleanRoomsBtn").onclick = cleanRooms;
-
-    getRedirectResult(auth).catch(err => {
-      console.error("Redirect login error:", err);
-      show("loginView");
-      showLoginError(`
-        Erro no login Google.<br>
-        Código: <b>${esc(err.code || "")}</b><br>
-        Mensagem: ${esc(err.message || "")}<br><br>
-        Confira se o domínio do GitHub Pages foi adicionado em Firebase → Authentication → Settings → Authorized domains.
-      `);
-    });
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        show("loginView");
-        return;
-      }
-
-      try {
-        await startApp(user);
-      } catch (err) {
-        console.error(err);
-        show("loginView");
-        showLoginError("Erro ao carregar painel: " + esc(err.message || err.code));
-      }
-    });
-  </script>
+  <div class="card"><h2>Salas</h2><div class="scroll"><table><thead><tr><th>Sala</th><th>Host</th><th>Jogadores</th><th>Atualizada</th><th>Ações</th></tr></thead><tbody id="roomsBody"></tbody></table></div></div>
+  <div id="appDebug" class="debug"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult,
+  signInWithPopup, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, get, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBZvxl3BKYS4WIA0Ov1xQ7xLwLRrJm7SwU",
+  authDomain: "mundo-magico-online.firebaseapp.com",
+  databaseURL: "https://mundo-magico-online-default-rtdb.firebaseio.com",
+  projectId: "mundo-magico-online",
+  storageBucket: "mundo-magico-online.firebasestorage.app",
+  messagingSenderId: "495535078197",
+  appId: "1:495535078197:web:6f86b82c22f3492e802a7c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
+
+const ONLINE_LIMIT = 10*60*1000;
+const INACTIVE_LIMIT = 10*24*60*60*1000;
+const OLD_LIMIT = 24*60*60*1000;
+const MARK = "MUNDO_MAGICO_ADMIN__@toucabr__EDU_DOK__2026";
+
+let state = {players:{}, nicks:{}, rooms:{}};
+let currentUser = null;
+let isAdmin = false;
+let timer = null;
+const $ = id => document.getElementById(id);
+const now = () => Date.now();
+const social = path => ref(db, "rooms/_social/" + path);
+
+function debug(msg){
+  const el = $("loginMsg");
+  if(el) el.textContent = String(msg);
+  console.log("[ADM]", msg);
+}
+function appDebug(msg){
+  $("appDebug").textContent = String(msg);
+  console.log("[ADM]", msg);
+}
+function esc(v){return String(v??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+function show(which){
+  $("loginView").style.display = which==="login" ? "grid" : "none";
+  $("deniedView").style.display = which==="denied" ? "grid" : "none";
+  $("appView").style.display = which==="app" ? "block" : "none";
+}
+function userInfo(u){
+  if(!u) return "sem usuário";
+  return JSON.stringify({
+    uid:u.uid,
+    email:u.email,
+    isAnonymous:u.isAnonymous,
+    providers:u.providerData.map(p=>p.providerId),
+    domain:location.hostname
+  }, null, 2);
+}
+function isGoogleUser(u){
+  return !!u && !u.isAnonymous && u.providerData.some(p => p.providerId === "google.com");
+}
+function age(ts){
+  if(!ts) return "sem data";
+  const d=Math.max(0,now()-Number(ts)); const m=Math.floor(d/60000);
+  if(m<60) return m+" min"; const h=Math.floor(m/60);
+  if(h<48) return h+" h"; return Math.floor(h/24)+" dias";
+}
+function isFresh(v){return !!(v&&v.online&&now()-(+v.lastSeen||0)<ONLINE_LIMIT)}
+function isGhost(v){return !!(v&&v.online&&now()-(+v.lastSeen||0)>=ONLINE_LIMIT)}
+
+$("loginRedirectBtn").onclick = async () => {
+  try{
+    debug("Iniciando login por redirect...");
+    await setPersistence(auth, browserLocalPersistence);
+    await signInWithRedirect(auth, provider);
+  }catch(e){
+    debug("Erro redirect: " + (e.code||"") + "\\n" + (e.message||e));
+  }
+};
+$("loginPopupBtn").onclick = async () => {
+  try{
+    debug("Tentando login por popup...");
+    await setPersistence(auth, browserLocalPersistence);
+    await signInWithPopup(auth, provider);
+  }catch(e){
+    debug("Erro popup: " + (e.code||"") + "\\n" + (e.message||e));
+  }
+};
+$("clearBtn").onclick = async () => {
+  try{ await signOut(auth); }catch(e){}
+  localStorage.clear(); sessionStorage.clear();
+  debug("Sessão local limpa. Recarregue a página e tente novamente.");
+};
+$("logoutBtn").onclick = () => signOut(auth);
+$("deniedLogoutBtn").onclick = () => signOut(auth);
+$("refreshBtn").onclick = () => loadAll(true);
+$("searchBox").oninput = render;
+$("statusFilter").onchange = render;
+$("sortMode").onchange = render;
+
+async function checkAdmin(uid){
+  // Esta leitura precisa ser permitida nas regras:
+  // admins/$uid .read auth.uid === $uid
+  const s = await get(ref(db, "admins/" + uid));
+  return s.exists() && s.val() === true;
+}
+async function bootUser(user){
+  debug("Usuário detectado:\\n" + userInfo(user));
+  if(user && user.isAnonymous){
+    debug("Sessão anônima detectada. Deslogando para exigir Google.");
+    await signOut(auth);
+    show("login");
+    return;
+  }
+  if(!isGoogleUser(user)){
+    debug("Usuário não é Google. Mostrando login.");
+    show("login");
+    return;
+  }
+  currentUser = user;
+  try{
+    isAdmin = await checkAdmin(user.uid);
+  }catch(e){
+    debug("Erro lendo /admins/" + user.uid + ": " + (e.code||"") + "\\n" + (e.message||e));
+    show("login");
+    return;
+  }
+  if(!isAdmin){
+    $("deniedDebug").textContent = "UID sem permissão:\\n" + userInfo(user) + "\\n\\nAdicione no Realtime Database:\\nadmins/" + user.uid + " = true";
+    show("denied");
+    return;
+  }
+  $("accountLabel").textContent = user.email || user.uid;
+  show("app");
+  await loadAll(true);
+  if(timer) clearInterval(timer);
+  timer = setInterval(()=>loadAll(false), 15000);
+}
+
+getRedirectResult(auth).then(result=>{
+  if(result && result.user) debug("Redirect retornou usuário:\\n" + userInfo(result.user));
+  else debug("Aguardando sessão. Se já clicou login e voltou para esta tela, clique em 'Tentar popup alternativo' ou veja o diagnóstico.");
+}).catch(e=>{
+  debug("Erro getRedirectResult: " + (e.code||"") + "\\n" + (e.message||e));
+});
+
+onAuthStateChanged(auth, async user => {
+  if(!user){
+    show("login");
+    debug("Nenhum usuário logado. Domínio atual: " + location.hostname);
+    return;
+  }
+  await bootUser(user);
+});
+
+async function loadAll(noisy=false){
+  try{
+    const [p,n,r] = await Promise.all([
+      get(social("playersOnline")),
+      get(social("nicks")),
+      get(ref(db, "rooms"))
+    ]);
+    state.players = p.val() || {};
+    state.nicks = n.val() || {};
+    const rooms = r.val() || {};
+    delete rooms._social;
+    state.rooms = rooms;
+    $("lastUpdate").textContent = "Última atualização: " + new Date().toLocaleTimeString();
+    render();
+    if(noisy) appDebug("Painel carregado. UID: " + currentUser.uid);
+  }catch(e){
+    appDebug("Erro ao ler dados. Provável regra Firebase bloqueando.\\n" + (e.code||"") + "\\n" + (e.message||e));
+  }
+}
+function render(){
+  const vals=Object.values(state.players);
+  $("sOnline").textContent = vals.filter(isFresh).length;
+  $("sGhost").textContent = vals.filter(isGhost).length;
+  $("sNicks").textContent = Object.keys(state.nicks).length;
+  $("sRooms").textContent = Object.keys(state.rooms).length;
+  renderPlayers(); renderNicks(); renderRooms();
+}
+function qmatch(t){const q=$("searchBox").value.trim().toLowerCase(); return !q || String(t).toLowerCase().includes(q)}
+function renderPlayers(){
+  const filter=$("statusFilter").value, sort=$("sortMode").value;
+  let arr=Object.entries(state.players).filter(([id,v])=>{
+    if(!qmatch(id+" "+(v?.nick||"")+" "+(v?.nickKey||""))) return false;
+    if(filter==="online") return isFresh(v);
+    if(filter==="ghost") return isGhost(v);
+    if(filter==="offline") return !isFresh(v)&&!isGhost(v);
+    return true;
+  });
+  arr.sort((a,b)=>{
+    const av=a[1]||{}, bv=b[1]||{};
+    if(sort==="old") return (+av.lastSeen||0)-(+bv.lastSeen||0);
+    if(sort==="nick") return String(av.nick||"").localeCompare(String(bv.nick||""));
+    return (+bv.lastSeen||0)-(+av.lastSeen||0);
+  });
+  $("playersBody").innerHTML = arr.map(([id,v])=>{
+    v=v||{}; const f=isFresh(v), g=isGhost(v), cls=f?"on":g?"warn":"off", label=f?"ON":g?"FANTASMA":"OFF";
+    return `<tr><td><span class="pill ${cls}">${label}</span></td><td>${esc(v.nick||"sem nick")}</td><td><code>${esc(id)}</code></td><td>${age(v.lastSeen)}</td><td><button class="orange" onclick="setOffline('${esc(id)}')">OFF</button><button class="red" onclick="deletePlayer('${esc(id)}','${esc(v.nickKey||"")}')">Apagar</button></td></tr>`
+  }).join("") || `<tr><td colspan="5">Nada encontrado.</td></tr>`;
+}
+function renderNicks(){
+  const arr=Object.entries(state.nicks).filter(([k,v])=>qmatch(k+" "+v)).sort((a,b)=>a[0].localeCompare(b[0]));
+  $("nicksBody").innerHTML = arr.map(([nick,uid])=>{
+    const p=state.players[uid], st=p?"lastSeen: "+age(p.lastSeen):"órfão/sem presença";
+    return `<tr><td>${esc(nick)}</td><td><code>${esc(uid)}</code></td><td>${esc(st)}</td><td><button class="red" onclick="deleteNick('${esc(nick)}')">Liberar</button></td></tr>`;
+  }).join("") || `<tr><td colspan="4">Nada encontrado.</td></tr>`;
+}
+function renderRooms(){
+  const arr=Object.entries(state.rooms).filter(([room,v])=>qmatch(room+" "+(v?.meta?.host||"")+" "+(v?.meta?.hostAuthUid||""))).sort((a,b)=>(+b[1]?.meta?.updated||0)-(+a[1]?.meta?.updated||0));
+  $("roomsBody").innerHTML = arr.map(([room,v])=>{
+    const meta=v?.meta||{}, count=Object.keys(v?.players||{}).length;
+    return `<tr><td><b>${esc(room)}</b></td><td>${esc(meta.host||meta.hostAuthUid||"sem host")}</td><td>${count}</td><td>${age(meta.updated)}</td><td><button class="red" onclick="deleteRoom('${esc(room)}')">Apagar</button></td></tr>`;
+  }).join("") || `<tr><td colspan="5">Nada encontrado.</td></tr>`;
+}
+function guard(msg){ if(!isAdmin){alert("Sem permissão ADM."); return false} return confirm(msg||"Confirmar ação?") }
+async function setOffline(id){if(!guard("Marcar offline?"))return; await update(social("playersOnline/"+id),{online:false,lastSeen:serverTimestamp(),adminMark:MARK}); await loadAll(true)}
+async function deleteNick(nick){if(!guard("Liberar nick?"))return; await remove(social("nicks/"+nick)); await loadAll(true)}
+async function deletePlayer(id,nickKey){
+  if(!guard("Apagar jogador/registros?"))return;
+  const up={}; up["rooms/_social/playersOnline/"+id]=null; if(nickKey) up["rooms/_social/nicks/"+nickKey]=null;
+  up["rooms/_social/friends/"+id]=null; up["rooms/_social/friendRequests/"+id]=null; up["rooms/_social/roomInvites/"+id]=null;
+  Object.keys(state.players).forEach(o=>{up["rooms/_social/friends/"+o+"/"+id]=null; up["rooms/_social/friendRequests/"+o+"/"+id]=null;});
+  await update(ref(db),up); await loadAll(true);
+}
+async function deleteRoom(room){if(!guard("Apagar sala?"))return; await remove(ref(db,"rooms/"+room)); await loadAll(true)}
+async function cleanGhost(){
+  if(!guard("Limpar fantasmas +10min?"))return; const up={};
+  Object.entries(state.players).forEach(([id,v])=>{if(isGhost(v)){up["rooms/_social/playersOnline/"+id+"/online"]=false; up["rooms/_social/playersOnline/"+id+"/adminMark"]=MARK;}});
+  await update(ref(db),up); await loadAll(true);
+}
+async function clean10(){
+  if(!guard("Apagar inativos +10 dias?"))return; const lim=now()-INACTIVE_LIMIT, up={};
+  Object.entries(state.players).forEach(([id,v])=>{if((+v?.lastSeen||0)&&(+v.lastSeen)<lim){up["rooms/_social/playersOnline/"+id]=null;if(v.nickKey)up["rooms/_social/nicks/"+v.nickKey]=null;up["rooms/_social/friends/"+id]=null;up["rooms/_social/friendRequests/"+id]=null;up["rooms/_social/roomInvites/"+id]=null;}});
+  await update(ref(db),up); await loadAll(true);
+}
+async function cleanInvites(){
+  if(!guard("Limpar convites +24h?"))return; const lim=now()-OLD_LIMIT, up={}, s=(await get(ref(db,"rooms/_social"))).val()||{};
+  ["roomInvites","friendRequests"].forEach(path=>{Object.entries(s[path]||{}).forEach(([uid,box])=>Object.entries(box||{}).forEach(([id,v])=>{if((+v?.time||+v?.t||0)<lim)up["rooms/_social/"+path+"/"+uid+"/"+id]=null;}));});
+  await update(ref(db),up); await loadAll(true);
+}
+async function cleanRooms(){
+  if(!guard("Apagar salas +24h?"))return; const lim=now()-OLD_LIMIT, up={};
+  Object.entries(state.rooms).forEach(([room,v])=>{if(!v?.meta?.updated || (+v.meta.updated)<lim) up["rooms/"+room]=null;});
+  await update(ref(db),up); await loadAll(true);
+}
+window.setOffline=setOffline; window.deleteNick=deleteNick; window.deletePlayer=deletePlayer; window.deleteRoom=deleteRoom;
+$("cleanGhostBtn").onclick=cleanGhost; $("clean10Btn").onclick=clean10; $("cleanInvitesBtn").onclick=cleanInvites; $("cleanRoomsBtn").onclick=cleanRooms;
+</script>
 </body>
 </html>
