@@ -1,1213 +1,1213 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#11111f">
-  <link rel="manifest" href="./manifest.json">
-  <title>Mundo Mágico ADM • @toucabr</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor de Imagens - Touca</title>
   <style>
-    :root{
-      --bg:#080814;
-      --bg2:#0d0d1d;
-      --card:#151528;
-      --card2:#1d1d34;
-      --glass:rgba(255,255,255,.07);
-      --line:rgba(255,255,255,.12);
-      --line2:rgba(255,255,255,.2);
-      --text:#fbf8ff;
-      --muted:#bcb3d3;
-      --primary:#8a5cff;
-      --blue:#5f9cff;
-      --pink:#ff4f9a;
-      --danger:#ff4f6d;
-      --warn:#ffb84d;
-      --ok:#36d482;
-      --shadow:0 18px 60px rgba(0,0,0,.34);
-      --radius:24px;
+    :root {
+      --primary: #72949F;
+      --primary-light: #92b6c1;
+      --accent: #4CA1AF;
+      --accent-light: #70c0cc;
+      --text: #F5F5F5;
+      --text-muted: #B8C5C9;
+      --bg-dark: #1E2A32;
+      --panel: rgba(33,49,59,.88);
+      --panel-solid: rgba(33,49,59,.98);
+      --field: rgba(40,58,69,.78);
+      --border: rgba(114,148,159,.34);
+      --danger: #E44B3A;
+      --radius: 18px;
+      --shadow: 0 16px 36px rgba(0,0,0,.34);
+      --transition: 210ms ease;
     }
 
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      min-height:100vh;
-      color:var(--text);
-      font-family:Inter,Arial,Helvetica,sans-serif;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      font: 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(circle at 15% -10%, rgba(138,92,255,.38), transparent 32%),
-        radial-gradient(circle at 90% 5%, rgba(95,156,255,.2), transparent 28%),
-        radial-gradient(circle at 60% 105%, rgba(255,79,154,.14), transparent 35%),
-        linear-gradient(180deg,#0f0a22 0%,#080814 55%,#05050c 100%);
-      padding:14px;
-      overflow-x:hidden;
+        radial-gradient(circle at 18% 0%, rgba(76, 161, 175, .24), transparent 30%),
+        radial-gradient(circle at 86% 14%, rgba(114, 148, 159, .24), transparent 34%),
+        linear-gradient(-45deg, #1E2A32, #263842, #1C2931, #30424b);
+      background-size: 100% 100%, 100% 100%, 350% 350%;
+      animation: bgMove 16s ease infinite;
+      padding: 16px;
+      overflow-x: hidden;
     }
 
-    body:before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-      background-size:42px 42px;
-      mask-image:linear-gradient(180deg,rgba(0,0,0,.9),transparent 90%);
+    @keyframes bgMove {
+      0% { background-position: 0 0, 0 0, 0% 50%; }
+      50% { background-position: 0 0, 0 0, 100% 50%; }
+      100% { background-position: 0 0, 0 0, 0% 50%; }
     }
 
-    .hiddenMark{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-    .app{max-width:1360px;margin:auto;position:relative;z-index:1}
-    .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:14px;
-      animation:slideDown .38s ease both;
-    }
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{
-      width:56px;height:56px;border-radius:20px;
-      display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--primary),var(--blue));
-      box-shadow:0 14px 38px rgba(138,92,255,.36);
-      font-size:28px;
-      flex:0 0 auto;
-    }
-    h1{font-size:24px;margin:0;letter-spacing:-.03em}
-    h2{margin:0 0 12px;font-size:18px;letter-spacing:-.02em}
-    .sub{color:var(--muted);font-size:13px;margin-top:3px}
-    .userBox{
-      display:flex;align-items:center;gap:10px;
-      padding:8px 10px;border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      color:var(--muted);
-      font-size:12px;
-      max-width:100%;
-    }
-    .userBox img{width:30px;height:30px;border-radius:50%;display:none}
-    .userBox span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
-
-    .nav{
-      display:grid;
-      grid-template-columns:repeat(6,minmax(0,1fr));
-      gap:8px;
-      margin-bottom:14px;
-      animation:fadeIn .4s ease .08s both;
-    }
-    .tab{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      border-radius:17px;
-      padding:12px 9px;
-      font-weight:900;
-      cursor:pointer;
-      transition:.18s transform,.18s background,.18s border-color;
-    }
-    .tab:hover{transform:translateY(-1px);border-color:var(--line2)}
-    .tab.active{
-      background:linear-gradient(135deg,rgba(138,92,255,.95),rgba(95,156,255,.85));
-      border-color:rgba(255,255,255,.25);
-      box-shadow:0 10px 28px rgba(95,156,255,.15);
+    .app {
+      width: min(1500px, 100%);
+      min-height: calc(100vh - 32px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 14px;
     }
 
-    button{
-      border:0;
-      border-radius:15px;
-      padding:11px 13px;
-      color:#fff;
-      font-weight:900;
-      cursor:pointer;
-      background:linear-gradient(135deg,var(--primary),var(--blue));
-      box-shadow:0 9px 24px rgba(95,156,255,.13);
-      transition:.16s transform,.16s filter,.16s opacity;
-    }
-    button:hover{transform:translateY(-1px);filter:brightness(1.05)}
-    button:active{transform:translateY(1px) scale(.99)}
-    button:disabled{opacity:.5;cursor:not-allowed;transform:none}
-    button.red{background:linear-gradient(135deg,#ff4f6d,#c82048)}
-    button.orange{background:linear-gradient(135deg,#ffb84d,#ff742f)}
-    button.green{background:linear-gradient(135deg,#36d482,#139b54)}
-    button.gray{background:linear-gradient(135deg,#3a3652,#252338)}
-
-    .card{
-      background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.045));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(16px);
-      padding:16px;
-      margin-bottom:14px;
-      animation:cardIn .34s ease both;
-    }
-    .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .stat{
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.22);
-      border-radius:20px;
-      padding:14px;
-      min-height:92px;
-      position:relative;
-      overflow:hidden;
-    }
-    .stat:after{
-      content:"";
-      position:absolute;
-      right:-30px;top:-30px;width:88px;height:88px;border-radius:50%;
-      background:rgba(255,255,255,.05);
-    }
-    .stat .label{font-size:12px;color:var(--muted);position:relative}
-    .stat b{display:block;font-size:32px;margin-top:8px;letter-spacing:-.04em;position:relative}
-    .stat small{color:var(--muted);font-size:11px;position:relative}
-
-    input,select{
-      width:100%;
-      border:1px solid var(--line);
-      border-radius:15px;
-      padding:12px;
-      color:var(--text);
-      background:rgba(0,0,0,.25);
-      outline:none;
-    }
-    select option{background:#121222;color:white}
-    .tools{display:grid;grid-template-columns:1.3fr .7fr .7fr auto;gap:9px;align-items:center}
-    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .right{justify-content:flex-end}
-    .muted{color:var(--muted)}
-    .notice{color:var(--muted);font-size:13px;line-height:1.45}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
-    th{color:#ded4ff;text-transform:uppercase;font-size:11px;letter-spacing:.05em}
-    code{color:#ded4ff;font-size:12px}
-    .scroll{overflow:auto;max-height:560px;overscroll-behavior:contain}
-    .pill{
-      display:inline-flex;align-items:center;gap:4px;
-      border-radius:999px;padding:4px 8px;
-      font-size:11px;font-weight:900;
-      background:rgba(255,255,255,.1);
-      white-space:nowrap;
-    }
-    .pill.on{background:rgba(54,212,130,.15);color:#8dffbd}
-    .pill.off{background:rgba(255,79,109,.14);color:#ff9aaa}
-    .pill.warn{background:rgba(255,184,77,.15);color:#ffd596}
-    .pill.lock{background:rgba(138,92,255,.17);color:#d7c8ff}
-    .empty{padding:16px;color:var(--muted)}
-    .section{display:none}
-    .section.active{display:block}
-    .loginView,.deniedView{
-      min-height:90vh;
-      display:grid;
-      place-items:center;
-    }
-    .loginBox{
-      width:min(520px,100%);
-      text-align:center;
-      padding:28px;
-    }
-    .loginBox p{color:var(--muted);line-height:1.45}
-    .error{
-      background:rgba(255,79,109,.13);
-      border:1px solid rgba(255,79,109,.35);
-      color:#ffd6de;
-      padding:12px;border-radius:16px;
-      text-align:left;font-size:13px;white-space:pre-wrap;display:none;
-      margin-top:12px;
-    }
-    .toast{
-      position:fixed;
-      left:50%;bottom:20px;
-      transform:translateX(-50%) translateY(20px);
-      opacity:0;pointer-events:none;
-      background:#18182a;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px 14px;
-      box-shadow:var(--shadow);
-      transition:.18s;
-      z-index:50;
-      max-width:92vw;
-    }
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .dangerText{color:#ff9aaa}
-    .okText{color:#8dffbd}
-    .warnText{color:#ffd596}
-
-    .kpiList{display:grid;gap:8px}
-    .kpiItem{
-      display:flex;justify-content:space-between;gap:10px;
-      padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:rgba(0,0,0,.18)
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
     }
 
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
-    @keyframes cardIn{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
-
-    @media(max-width:980px){
-      body{padding:10px}
-      .top{align-items:flex-start}
-      .nav{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .grid3,.split,.tools{grid-template-columns:1fr}
-      .userBox span{max-width:140px}
-      th:nth-child(3),td:nth-child(3){display:none}
+    .title {
+      font-size: clamp(23px, 3vw, 34px);
+      font-weight: 950;
+      letter-spacing: -.03em;
+      line-height: 1;
+      background: linear-gradient(to right, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    @media(max-width:520px){
-      .brand h1{font-size:20px}
-      .logo{width:48px;height:48px;font-size:24px}
-      .tab{padding:11px 7px;font-size:12px}
-      .stat b{font-size:26px}
-      th,td{padding:9px 6px}
+
+    .signature {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 4px;
+      display: inline-block;
+      animation: softPulse 2.8s ease-in-out infinite;
+    }
+
+    @keyframes softPulse {
+      0%, 100% { transform: translateY(0); opacity: .78; }
+      50% { transform: translateY(-1px); opacity: 1; }
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(33,49,59,.92);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 0 8px 22px rgba(0,0,0,.22);
+      transition: transform var(--transition), border-color var(--transition), background var(--transition), opacity var(--transition);
+    }
+
+    .icon-btn:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--primary); background: var(--panel-solid); }
+    .icon-btn:active:not(:disabled) { transform: scale(.96); }
+    .icon-btn:disabled { opacity: .38; cursor: not-allowed; }
+
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .preview-shell {
+      min-height: 0;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(30,42,50,.74);
+      backdrop-filter: blur(12px);
+      position: relative;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+    }
+
+    canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      border-radius: 14px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.32), inset 0 0 0 1px rgba(255,255,255,.08);
+      touch-action: none;
+      cursor: grab;
+      transition: transform 180ms ease, opacity 180ms ease;
+      background: #0B0E11;
+    }
+
+    canvas:active { cursor: grabbing; transform: scale(.998); }
+
+    .hint {
+      position: absolute;
+      left: 22px;
+      bottom: 18px;
+      max-width: calc(100% - 44px);
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text-muted);
+      background: rgba(12,20,25,.64);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .edit-popover {
+      position: absolute;
+      z-index: 20;
+      width: min(330px, calc(100% - 28px));
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(20,32,39,.96);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 18px 38px rgba(0,0,0,.42);
+      display: none;
+      animation: pop .16s ease both;
+    }
+
+    .edit-popover.active { display: block; }
+
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(8px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .edit-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .edit-input {
+      width: 100%;
+      min-height: 44px;
+      padding: 11px 12px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      font: 700 14px/1.3 system-ui, sans-serif;
+    }
+
+    .edit-input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(114,148,159,.2);
+    }
+
+    .edit-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .panel {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      animation: cardIn .28s ease both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .card h2 {
+      font-size: 16px;
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+
+    .muted { color: var(--text-muted); font-size: 12px; }
+
+    .grid { display: grid; gap: 10px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .row > * { min-width: 0; }
+
+    .seg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 5px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(40,58,69,.55);
+    }
+
+    .seg button,
+    .chip,
+    .btn {
+      min-height: 38px;
+      border: 0;
+      border-radius: 999px;
+      color: var(--text);
+      font-weight: 850;
+      cursor: pointer;
+      transition: transform var(--transition), filter var(--transition), background var(--transition), opacity var(--transition);
+    }
+
+    .seg button { background: transparent; color: var(--text-muted); padding: 0 12px; }
+    .seg button.active { color: #142026; background: linear-gradient(180deg, var(--accent-light), var(--accent)); }
+    .seg button:hover:not(.active) { background: rgba(255,255,255,.08); color: var(--text); }
+
+    .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .file-box {
+      min-height: 62px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(40,58,69,.76);
+      transition: transform var(--transition), border-color var(--transition), background var(--transition);
+    }
+
+    .file-box:hover { transform: translateY(-1px); border-color: var(--primary); background: rgba(48,70,82,.9); }
+
+    .file-box input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-content {
+      height: 100%;
+      padding: 10px 12px;
+      display: grid;
+      align-content: center;
+      gap: 2px;
+    }
+
+    .file-title { font-size: 13px; font-weight: 900; }
+    .file-name { color: var(--text-muted); font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+    .hidden { display: none !important; }
+
+    .selector-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+    .chip {
+      background: rgba(40,58,69,.78);
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .chip.active { color: #142026; background: linear-gradient(180deg, var(--primary-light), var(--primary)); }
+    .chip:hover { transform: translateY(-1px); filter: brightness(1.06); }
+
+    label span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    select {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--field);
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(114,148,159,.18), 0 8px 18px rgba(0,0,0,.3);
+      transition: transform var(--transition), background var(--transition);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); background: var(--accent-light); }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: rgba(40,58,69,.55);
+    }
+
+    .switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      flex: 0 0 auto;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #344952;
+      border-radius: 999px;
+      transition: var(--transition);
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #fff;
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(0,0,0,.28);
+    }
+
+    .switch input:checked + .slider { background: var(--primary); }
+    .switch input:checked + .slider::before { transform: translateX(24px); }
+
+    .btn {
+      min-height: 44px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: .1px;
+    }
+
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.07); }
+    .btn:active { transform: scale(.97); }
+    .btn-primary { color: #142026; background: linear-gradient(180deg, var(--primary-light), var(--primary)); }
+    .btn-accent { color: #142026; background: linear-gradient(180deg, var(--accent-light), var(--accent)); }
+    .btn-ghost { background: rgba(40,58,69,.8); border: 1px solid var(--border); }
+    .btn-danger { background: rgba(228,75,58,.18); border: 1px solid rgba(228,75,58,.4); color: #ffd8d3; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 50;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(20,32,39,.95);
+      color: var(--text);
+      box-shadow: 0 14px 34px rgba(0,0,0,.36);
+      transition: 220ms ease;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .toast.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 980px) {
+      body { padding: 12px; }
+      .app { min-height: auto; }
+      .workspace { grid-template-columns: 1fr; }
+      .canvas-wrap { min-height: 360px; max-height: 68vh; }
+      .panel { padding-bottom: 12px; }
+    }
+
+    @media (max-width: 560px) {
+      .topbar { grid-template-columns: 1fr; }
+      .top-actions { justify-content: flex-end; }
+      .upload-grid, .grid-2 { grid-template-columns: 1fr; }
+      .selector-row { grid-template-columns: repeat(2, 1fr); }
+      .hint { border-radius: 14px; }
     }
   </style>
 </head>
-<body data-owner="@toucabr">
-  <div class="hiddenMark">MUNDO_MAGICO_ADVANCED_ADMIN__TOUCABR__PRIVATE_PANEL__2026</div>
-
-  <div id="loginView" class="loginView">
-    <div class="card loginBox">
-      <div class="logo" style="margin:auto">🛡️</div>
-      <h1>Mundo Mágico ADM</h1>
-      <p>Painel privado PWA para monitorar, limpar e otimizar o jogo.</p>
-      <button id="loginBtn">Entrar com Google</button>
-      <button id="loginPopupBtn" class="orange">Popup alternativo</button>
-      <button id="clearBtn" class="gray">Limpar sessão</button>
-      <div id="loginError" class="error"></div>
-      <p class="notice">Acesso liberado apenas para UIDs presentes em <b>/admins</b>.</p>
-    </div>
-  </div>
-
-  <div id="deniedView" class="deniedView" style="display:none">
-    <div class="card loginBox">
-      <div class="logo" style="margin:auto">⛔</div>
-      <h1>Acesso negado</h1>
-      <p>Esta conta Google não está cadastrada como ADM.</p>
-      <p class="notice">UID: <code id="deniedUid"></code></p>
-      <button id="deniedLogoutBtn" class="gray">Sair e trocar conta</button>
-    </div>
-  </div>
-
-  <main id="appView" class="app" style="display:none">
-    <header class="top">
-      <div class="brand">
-        <div class="logo">🛡️</div>
-        <div>
-          <h1>Mundo Mágico ADM</h1>
-          <div class="sub">Painel PWA separado • @toucabr</div>
-        </div>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1 class="title">Editor de Imagens</h1>
+        <span class="signature">@toucabr</span>
       </div>
-      <div class="row right">
-        <div class="userBox">
-          <img id="userPhoto" alt="">
-          <span id="userLabel">Conta ADM</span>
-        </div>
-        <button id="refreshBtn" class="gray">Atualizar</button>
-        <button id="installBtn" class="green" style="display:none">Instalar</button>
-        <button id="logoutBtn" class="red">Sair</button>
+      <div class="top-actions" aria-label="Histórico">
+        <button class="icon-btn" id="undoBtn" title="Voltar" aria-label="Voltar">↶</button>
+        <button class="icon-btn" id="redoBtn" title="Avançar" aria-label="Avançar">↷</button>
       </div>
     </header>
 
-    <nav class="nav">
-      <button class="tab active" data-tab="dashboard">Dashboard</button>
-      <button class="tab" data-tab="rooms">Salas</button>
-      <button class="tab" data-tab="players">Jogadores</button>
-      <button class="tab" data-tab="maintenance">Manutenção</button>
-      <button class="tab" data-tab="bans">Banidos</button>
-      <button class="tab" data-tab="logs">Logs</button>
-    </nav>
-
-    <section id="dashboard" class="section active">
-      <div class="grid4">
-        <div class="stat"><span class="label">Online real</span><b id="sOnline">0</b><small>lastSeen recente</small></div>
-        <div class="stat"><span class="label">Online fantasma</span><b id="sGhost">0</b><small>marcado online, mas velho</small></div>
-        <div class="stat"><span class="label">Salas abertas</span><b id="sRooms">0</b><small>rooms ativos no banco</small></div>
-        <div class="stat"><span class="label">Nicks</span><b id="sNicks">0</b><small>reservas em _social</small></div>
-      </div>
-
-      <div class="grid4" style="margin-top:12px">
-        <div class="stat"><span class="label">Salas 1/2</span><b id="sRoomsOne">0</b><small>com vaga</small></div>
-        <div class="stat"><span class="label">Salas 2/2</span><b id="sRoomsFull">0</b><small>cheias</small></div>
-        <div class="stat"><span class="label">Privadas</span><b id="sPrivate">0</b><small>com senha</small></div>
-        <div class="stat"><span class="label">Lixo estimado</span><b id="sTrash">0</b><small>fantasmas + salas velhas</small></div>
-      </div>
-
-      <div class="split" style="margin-top:14px">
-        <div class="card">
-          <h2>Resumo operacional</h2>
-          <div class="kpiList" id="opsSummary"></div>
-        </div>
-        <div class="card">
-          <h2>Ações rápidas</h2>
-          <div class="row">
-            <button class="orange" id="quickGhostBtn">Limpar fantasmas</button>
-            <button class="orange" id="quickOldRoomsBtn">Limpar salas mortas</button>
-            <button class="red" id="quickAllRoomsBtn">Fechar todas as salas</button>
+    <section class="workspace">
+      <section class="preview-shell">
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="cvs" width="1920" height="1080"></canvas>
+          <div class="edit-popover" id="editPopover">
+            <div class="edit-label" id="editLabel">Editar texto</div>
+            <input class="edit-input" id="editInput" type="text" autocomplete="off" />
+            <div class="edit-actions">
+              <button class="btn btn-primary" id="saveTextBtn">Salvar</button>
+              <button class="btn btn-danger" id="clearTextBtn">Apagar</button>
+              <button class="btn btn-ghost" id="cancelTextBtn">Fechar</button>
+            </div>
           </div>
-          <p class="notice">Ações destrutivas pedem confirmação e criam log ADM.</p>
+          <div class="hint">Clique em um texto para editar/apagar. Arraste uma imagem para reposicionar.</div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="rooms" class="section">
-      <div class="card">
-        <h2>Salas</h2>
-        <div class="tools">
-          <input id="roomSearch" placeholder="Buscar por nome, ID, criador...">
-          <select id="roomFilter">
-            <option value="all">Todas</option>
-            <option value="open">Com vaga</option>
-            <option value="full">Cheias</option>
-            <option value="private">Privadas</option>
-            <option value="old">Mortas/velhas</option>
-          </select>
-          <select id="roomSort">
-            <option value="recent">Mais recentes</option>
-            <option value="old">Mais antigas</option>
-            <option value="players">Mais jogadores</option>
-          </select>
-          <button class="gray" id="reloadRoomsBtn">Atualizar</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="scroll">
-          <table>
-            <thead><tr><th>Sala</th><th>Status</th><th>ID</th><th>Criador</th><th>Atividade</th><th>Ações</th></tr></thead>
-            <tbody id="roomsBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section id="players" class="section">
-      <div class="card">
-        <h2>Jogadores</h2>
-        <div class="tools">
-          <input id="playerSearch" placeholder="Buscar nick ou UID...">
-          <select id="playerFilter">
-            <option value="all">Todos</option>
-            <option value="online">Online real</option>
-            <option value="ghost">Fantasma</option>
-            <option value="offline">Offline</option>
-          </select>
-          <select id="playerSort">
-            <option value="recent">Mais recentes</option>
-            <option value="old">Mais antigos</option>
-            <option value="nick">Nick A-Z</option>
-          </select>
-          <button class="gray" id="reloadPlayersBtn">Atualizar</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="scroll">
-          <table>
-            <thead><tr><th>Status</th><th>Nick</th><th>UID</th><th>Última</th><th>Ações</th></tr></thead>
-            <tbody id="playersBody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Nicks registrados</h2>
-        <div class="scroll">
-          <table>
-            <thead><tr><th>Nick</th><th>Dono</th><th>Estado</th><th>Ações</th></tr></thead>
-            <tbody id="nicksBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section id="maintenance" class="section">
-      <div class="grid3">
-        <div class="card">
-          <h2>Limpeza segura</h2>
-          <div class="row">
-            <button class="orange" id="cleanGhostBtn">Online fantasma +10min</button>
-            <button class="orange" id="cleanOldRoomsBtn">Salas mortas +30min</button>
-            <button class="orange" id="cleanWaitingBtn">Salas espera +5min</button>
-            <button class="red" id="clean10Btn">Inativos +10 dias</button>
+      <aside class="panel">
+        <section class="card">
+          <h2>Formato</h2>
+          <p class="muted">Normal: 2 imagens. Quadrado: 4 imagens em 2×2.</p>
+          <div class="seg" style="margin-top:12px">
+            <button id="twoModeBtn" class="active" type="button">2 imagens</button>
+            <button id="fourModeBtn" type="button">4 imagens</button>
           </div>
-          <p class="notice">Limpa dados descartáveis sem mexer em progresso local do jogador.</p>
-        </div>
+        </section>
 
-        <div class="card">
-          <h2>Emergência</h2>
-          <div class="row">
-            <button class="red" id="closeAllRoomsBtn">Fechar todas as salas</button>
-            <button class="red" id="wipeLobbyBtn">Limpar lobby antigo</button>
+        <section class="card">
+          <h2>Imagens</h2>
+          <p class="muted">Carregue as imagens e clique no número para ajustar cada uma.</p>
+          <div class="upload-grid" id="uploadGrid" style="margin-top:12px">
+            <label class="file-box" data-upload-box="0">
+              <input id="file0" type="file" accept="image/*" />
+              <span class="file-content"><strong class="file-title">Imagem 1</strong><small class="file-name" id="fileName0">Nenhum arquivo</small></span>
+            </label>
+            <label class="file-box" data-upload-box="1">
+              <input id="file1" type="file" accept="image/*" />
+              <span class="file-content"><strong class="file-title">Imagem 2</strong><small class="file-name" id="fileName1">Nenhum arquivo</small></span>
+            </label>
+            <label class="file-box hidden" data-upload-box="2">
+              <input id="file2" type="file" accept="image/*" />
+              <span class="file-content"><strong class="file-title">Imagem 3</strong><small class="file-name" id="fileName2">Nenhum arquivo</small></span>
+            </label>
+            <label class="file-box hidden" data-upload-box="3">
+              <input id="file3" type="file" accept="image/*" />
+              <span class="file-content"><strong class="file-title">Imagem 4</strong><small class="file-name" id="fileName3">Nenhum arquivo</small></span>
+            </label>
           </div>
-          <p class="notice">Use só se o multiplayer travar ou houver spam.</p>
-        </div>
+        </section>
 
-        <div class="card">
-          <h2>Backup manual</h2>
-          <div class="row">
-            <button class="green" id="exportBtn">Exportar JSON</button>
-            <button class="gray" id="copyStatsBtn">Copiar estatísticas</button>
+        <section class="card">
+          <h2>Ajuste rápido</h2>
+          <p class="muted">Selecione a imagem e ajuste sem abrir outro painel.</p>
+          <div class="selector-row" id="imageSelector" style="margin-top:12px">
+            <button class="chip active" data-select="0" type="button">1</button>
+            <button class="chip" data-select="1" type="button">2</button>
+            <button class="chip hidden" data-select="2" type="button">3</button>
+            <button class="chip hidden" data-select="3" type="button">4</button>
           </div>
-          <p class="notice">O backup baixa uma cópia dos principais nós visíveis ao ADM.</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Diagnóstico do banco</h2>
-        <div id="dbDiagnostic" class="kpiList"></div>
-      </div>
-    </section>
-
-    <section id="bans" class="section">
-      <div class="split">
-        <div class="card">
-          <h2>Banir UID</h2>
-          <input id="banUidInput" placeholder="UID do jogador">
-          <input id="banReasonInput" placeholder="Motivo opcional" style="margin-top:8px">
-          <button class="red" id="banBtn" style="margin-top:8px">Banir UID</button>
-          <p class="notice">O jogo atual pode não bloquear banidos sem ler /bans. Mesmo assim, o painel registra e permite remover dados/salas.</p>
-        </div>
-        <div class="card">
-          <h2>Banidos</h2>
-          <div class="scroll">
-            <table>
-              <thead><tr><th>UID</th><th>Motivo</th><th>Data</th><th>Ações</th></tr></thead>
-              <tbody id="bansBody"></tbody>
-            </table>
+          <div class="grid" style="margin-top:12px">
+            <label>
+              <span id="zoomLabel">Zoom da imagem 1</span>
+              <input id="zoomRange" type="range" min="50" max="220" value="100" />
+            </label>
+            <div class="switch-row">
+              <strong>Imagem colorida</strong>
+              <label class="switch" aria-label="Imagem colorida">
+                <input type="checkbox" id="colorToggle" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <button class="btn btn-ghost" id="centerBtn" type="button">Centralizar imagem selecionada</button>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <section id="logs" class="section">
-      <div class="card">
-        <div class="row">
-          <h2 style="margin-right:auto">Logs ADM</h2>
-          <button class="gray" id="reloadLogsBtn">Atualizar logs</button>
-        </div>
-        <div class="scroll">
-          <table>
-            <thead><tr><th>Ação</th><th>Alvo</th><th>ADM</th><th>Quando</th></tr></thead>
-            <tbody id="logsBody"></tbody>
-          </table>
-        </div>
-      </div>
+        <section class="card">
+          <h2>TERMINATED</h2>
+          <p class="muted">O carimbo já vem no editor. Escolha onde ele aparece no download com carimbo.</p>
+          <label style="margin-top:12px;display:block">
+            <span>Aplicar carimbo em</span>
+            <select id="stampTarget">
+              <option value="none">Nenhuma imagem</option>
+              <option value="0">Imagem 1</option>
+              <option value="1">Imagem 2</option>
+              <option value="2" class="stamp-extra">Imagem 3</option>
+              <option value="3" class="stamp-extra">Imagem 4</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Baixar</h2>
+          <p class="muted">Textos vazios não aparecem no arquivo final.</p>
+          <div class="grid grid-2" style="margin-top:12px">
+            <button class="btn btn-primary" id="downloadNormal" type="button">Baixar normal</button>
+            <button class="btn btn-accent" id="downloadStamped" type="button">Baixar com carimbo</button>
+          </div>
+        </section>
+      </aside>
     </section>
   </main>
 
-  <div id="toast" class="toast"></div>
+  <div class="toast" id="toast"></div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithRedirect,
-      signInWithPopup,
-      getRedirectResult,
-      onAuthStateChanged,
-      signOut,
-      setPersistence,
-      browserLocalPersistence
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      get,
-      set,
-      update,
-      remove,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBZvxl3BKYS4WIA0Ov1xQ7xLwLRrJm7SwU",
-      authDomain: "mundo-magico-online.firebaseapp.com",
-      databaseURL: "https://mundo-magico-online-default-rtdb.firebaseio.com",
-      projectId: "mundo-magico-online",
-      storageBucket: "mundo-magico-online.firebasestorage.app",
-      messagingSenderId: "495535078197",
-      appId: "1:495535078197:web:6f86b82c22f3492e802a7c"
+  <script>
+    const state = {
+      panelCount: 2,
+      selected: 0,
+      stampTarget: 'none',
+      panels: [
+        { file: null, img: null, url: null, fileName: '', x: 0, y: 0, zoom: 1, color: true, topLabel: 'OPPONENT', title: 'GAMMA JACK', subtitle: 'POWERS: CONTROLLED RADIATION BURST' },
+        { file: null, img: null, url: null, fileName: '', x: 0, y: 0, zoom: 1, color: true, topLabel: 'PROTOTYPE', title: 'OMNIDROID v.X6', subtitle: 'FEATURES: QUADRA-PEDAL LOCOMOTION, OMNI ARTICULATED GRAPPLING-CLAWS' },
+        { file: null, img: null, url: null, fileName: '', x: 0, y: 0, zoom: 1, color: true, topLabel: 'OPPONENT', title: 'CHARACTER 3', subtitle: 'POWERS: CLICK TO EDIT THIS TEXT' },
+        { file: null, img: null, url: null, fileName: '', x: 0, y: 0, zoom: 1, color: true, topLabel: 'PROTOTYPE', title: 'CHARACTER 4', subtitle: 'FEATURES: CLICK TO EDIT THIS TEXT' }
+      ],
+      rows: [
+        { threat: 'THREAT RATING: 7.9' },
+        { threat: 'THREAT RATING: 7.9' }
+      ]
     };
 
-    const ONLINE_LIMIT = 10 * 60 * 1000;
-    const OLD_ROOM_LIMIT = 30 * 60 * 1000;
-    const WAITING_LIMIT = 5 * 60 * 1000;
-    const INACTIVE_LIMIT = 10 * 24 * 60 * 60 * 1000;
-    const MARK = "MUNDO_MAGICO_ADMIN_ADVANCED__@toucabr__2026";
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-
-    let currentUser = null;
-    let isAdmin = false;
-    let deferredInstallPrompt = null;
-    let timer = null;
-
-    let state = {
-      players: {},
-      nicks: {},
-      rooms: {},
-      lobby: {},
-      bans: {},
-      logs: {}
+    const els = {
+      canvas: document.getElementById('cvs'),
+      canvasWrap: document.getElementById('canvasWrap'),
+      twoModeBtn: document.getElementById('twoModeBtn'),
+      fourModeBtn: document.getElementById('fourModeBtn'),
+      uploadBoxes: [...document.querySelectorAll('[data-upload-box]')],
+      fileInputs: [0,1,2,3].map(i => document.getElementById('file' + i)),
+      fileNames: [0,1,2,3].map(i => document.getElementById('fileName' + i)),
+      imageSelector: document.getElementById('imageSelector'),
+      imageChips: [...document.querySelectorAll('[data-select]')],
+      zoomRange: document.getElementById('zoomRange'),
+      zoomLabel: document.getElementById('zoomLabel'),
+      colorToggle: document.getElementById('colorToggle'),
+      centerBtn: document.getElementById('centerBtn'),
+      stampTarget: document.getElementById('stampTarget'),
+      undoBtn: document.getElementById('undoBtn'),
+      redoBtn: document.getElementById('redoBtn'),
+      downloadNormal: document.getElementById('downloadNormal'),
+      downloadStamped: document.getElementById('downloadStamped'),
+      editPopover: document.getElementById('editPopover'),
+      editLabel: document.getElementById('editLabel'),
+      editInput: document.getElementById('editInput'),
+      saveTextBtn: document.getElementById('saveTextBtn'),
+      clearTextBtn: document.getElementById('clearTextBtn'),
+      cancelTextBtn: document.getElementById('cancelTextBtn'),
+      toast: document.getElementById('toast')
     };
 
-    const $ = id => document.getElementById(id);
-    const now = () => Date.now();
-    const social = p => ref(db, "rooms/_social/" + p);
-
-    function esc(v){
-      return String(v ?? "").replace(/[&<>"]/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"
-      }[m]));
-    }
-
-    function showLoginError(msg){
-      const el = $("loginError");
-      el.textContent = msg;
-      el.style.display = msg ? "block" : "none";
-    }
-
-    function show(view){
-      $("loginView").style.display = view === "login" ? "grid" : "none";
-      $("deniedView").style.display = view === "denied" ? "grid" : "none";
-      $("appView").style.display = view === "app" ? "block" : "none";
-    }
-
-    function toast(msg){
-      const el = $("toast");
-      el.textContent = msg;
-      el.classList.add("show");
-      setTimeout(() => el.classList.remove("show"), 2500);
-    }
-
-    function age(ts){
-      if(!ts) return "sem data";
-      const d = Math.max(0, now() - Number(ts));
-      const m = Math.floor(d / 60000);
-      if(m < 60) return m + " min";
-      const h = Math.floor(m / 60);
-      if(h < 48) return h + " h";
-      return Math.floor(h / 24) + " dias";
-    }
-
-    function isFresh(v){
-      return !!(v && v.online && now() - (+v.lastSeen || 0) < ONLINE_LIMIT);
-    }
-
-    function isGhost(v){
-      return !!(v && v.online && now() - (+v.lastSeen || 0) >= ONLINE_LIMIT);
-    }
-
-    function roomPlayers(room){
-      const p = room?.players || {};
-      return Object.values(p).filter(v => v && (!v.lastSeen || now() - (+v.lastSeen || 0) < OLD_ROOM_LIMIT));
-    }
-
-    function roomCount(room){
-      return roomPlayers(room).length;
-    }
-
-    function isRoomOld(room){
-      const updated = +(room?.meta?.updated || room?.meta?.updatedAt || room?.updatedAt || 0);
-      if(!updated) return true;
-      return now() - updated > OLD_ROOM_LIMIT;
-    }
-
-    function isWaitingOld(room){
-      const meta = room?.meta || {};
-      const created = +(meta.createdAt || room?.createdAt || 0);
-      const started = !!(meta.started || meta.status === "playing" || room?.world);
-      return !started && created && now() - created > WAITING_LIMIT;
-    }
-
-    function isPrivateRoom(room, lobby){
-      return !!(lobby?.isPrivate || lobby?.password || lobby?.passwordHash || room?.meta?.isPrivate || room?.meta?.password);
-    }
-
-    async function logAction(action, target, extra = {}){
-      if(!currentUser) return;
-      const id = String(Date.now()) + "_" + Math.random().toString(36).slice(2,8);
-      await set(ref(db, "adminLogs/" + currentUser.uid + "/" + id), {
-        action,
-        target: String(target || ""),
-        adminUid: currentUser.uid,
-        adminEmail: currentUser.email || "",
-        at: Date.now(),
-        mark: MARK,
-        ...extra
-      }).catch(()=>{});
-    }
-
-    async function checkAdmin(uid){
-      const s = await get(ref(db, "admins/" + uid));
-      return s.exists() && s.val() === true;
-    }
-
-    function isGoogleUser(u){
-      return !!u && !u.isAnonymous && u.providerData.some(p => p.providerId === "google.com");
-    }
-
-    $("loginBtn").onclick = async () => {
-      try{
-        showLoginError("");
-        await setPersistence(auth, browserLocalPersistence);
-        await signInWithRedirect(auth, provider);
-      }catch(e){
-        showLoginError("Erro no redirect: " + (e.message || e.code || e));
-      }
+    const C = {
+      black: '#0B0E11',
+      top: '#6B8F9B',
+      top2: '#739ca7',
+      cyan: '#BFE7EA',
+      empty: '#151A21',
+      white: '#FFFFFF',
+      muted: 'rgba(255,255,255,.54)',
+      red: '#E44B3A'
     };
 
-    $("loginPopupBtn").onclick = async () => {
-      try{
-        showLoginError("");
-        await setPersistence(auth, browserLocalPersistence);
-        await signInWithPopup(auth, provider);
-      }catch(e){
-        showLoginError("Erro no popup: " + (e.message || e.code || e));
-      }
-    };
+    const fontPrimary = "Impact, 'Archivo Black', 'Arial Black', system-ui, sans-serif";
+    const fontMono = "'IBM Plex Mono', 'Share Tech Mono', ui-monospace, SFMono-Regular, Consolas, monospace";
 
-    $("clearBtn").onclick = async () => {
-      try{ await signOut(auth); }catch(e){}
-      localStorage.clear();
-      sessionStorage.clear();
-      showLoginError("Sessão limpa. Recarregue a página e tente novamente.");
-    };
+    let hitAreas = [];
+    let raf = null;
+    let editingField = null;
+    let history = [];
+    let historyIndex = -1;
+    let toastTimer = null;
+    let dragging = null;
 
-    $("logoutBtn").onclick = () => signOut(auth);
-    $("deniedLogoutBtn").onclick = () => signOut(auth);
-    $("refreshBtn").onclick = () => loadAll(true);
-
-    getRedirectResult(auth).catch(e => {
-      showLoginError("Erro no login: " + (e.message || e.code || e));
-    });
-
-    onAuthStateChanged(auth, async user => {
-      if(!user){
-        show("login");
-        return;
-      }
-
-      if(user.isAnonymous || !isGoogleUser(user)){
-        await signOut(auth);
-        show("login");
-        return;
-      }
-
-      currentUser = user;
-      try{
-        isAdmin = await checkAdmin(user.uid);
-      }catch(e){
-        showLoginError("Erro lendo /admins/" + user.uid + ": " + (e.message || e.code || e));
-        show("login");
-        return;
-      }
-
-      if(!isAdmin){
-        $("deniedUid").textContent = user.uid;
-        show("denied");
-        return;
-      }
-
-      $("userLabel").textContent = user.email || user.uid;
-      if(user.photoURL){
-        $("userPhoto").src = user.photoURL;
-        $("userPhoto").style.display = "block";
-      }
-
-      show("app");
-      await loadAll(true);
-      if(timer) clearInterval(timer);
-      timer = setInterval(() => loadAll(false), 15000);
-    });
-
-    async function loadAll(noisy=false){
-      try{
-        const [playersSnap,nicksSnap,roomsSnap,lobbySnap,bansSnap,logsSnap] = await Promise.all([
-          get(social("playersOnline")),
-          get(social("nicks")),
-          get(ref(db, "rooms")),
-          get(ref(db, "roomsLobby")),
-          get(ref(db, "bans")),
-          get(ref(db, "adminLogs"))
-        ]);
-
-        state.players = playersSnap.val() || {};
-        state.nicks = nicksSnap.val() || {};
-        const rooms = roomsSnap.val() || {};
-        delete rooms._social;
-        delete rooms._adminLogs;
-        state.rooms = rooms;
-        state.lobby = lobbySnap.val() || {};
-        state.bans = bansSnap.val() || {};
-        state.logs = logsSnap.val() || {};
-
-        renderAll();
-        if(noisy) toast("Painel atualizado");
-      }catch(e){
-        toast("Erro ao ler dados: " + (e.message || e.code || e));
-      }
+    function clonePanel(p) {
+      return { ...p };
     }
 
-    function renderAll(){
-      renderDashboard();
-      renderRooms();
-      renderPlayers();
-      renderNicks();
-      renderBans();
-      renderLogs();
-      renderDiagnostics();
-    }
-
-    function renderDashboard(){
-      const players = Object.values(state.players);
-      const rooms = Object.entries(state.rooms);
-      const roomsOne = rooms.filter(([id,r]) => roomCount(r) === 1).length;
-      const roomsFull = rooms.filter(([id,r]) => roomCount(r) >= 2).length;
-      const priv = rooms.filter(([id,r]) => isPrivateRoom(r, state.lobby[id])).length;
-      const oldRooms = rooms.filter(([id,r]) => isRoomOld(r)).length;
-      const ghosts = players.filter(isGhost).length;
-      const trash = ghosts + oldRooms;
-
-      $("sOnline").textContent = players.filter(isFresh).length;
-      $("sGhost").textContent = ghosts;
-      $("sRooms").textContent = rooms.length;
-      $("sNicks").textContent = Object.keys(state.nicks).length;
-      $("sRoomsOne").textContent = roomsOne;
-      $("sRoomsFull").textContent = roomsFull;
-      $("sPrivate").textContent = priv;
-      $("sTrash").textContent = trash;
-
-      $("opsSummary").innerHTML = [
-        ["Status", trash > 20 ? "Precisa limpar" : "OK", trash > 20 ? "warnText" : "okText"],
-        ["Salas mortas", oldRooms, oldRooms ? "warnText" : "okText"],
-        ["Players online reais", players.filter(isFresh).length, "okText"],
-        ["Última atualização", new Date().toLocaleTimeString(), ""]
-      ].map(([k,v,c]) => `<div class="kpiItem"><span>${esc(k)}</span><b class="${c}">${esc(v)}</b></div>`).join("");
-    }
-
-    function roomText(id, r, lobby){
-      const meta = r?.meta || {};
-      return [
-        id,
-        lobby?.name,
-        lobby?.roomName,
-        meta.name,
-        meta.roomName,
-        meta.host,
-        meta.hostNick,
-        meta.hostAuthUid
-      ].filter(Boolean).join(" ");
-    }
-
-    function renderRooms(){
-      const q = $("roomSearch")?.value?.trim().toLowerCase() || "";
-      const filter = $("roomFilter")?.value || "all";
-      const sort = $("roomSort")?.value || "recent";
-
-      let arr = Object.entries(state.rooms).filter(([id,r]) => {
-        const lobby = state.lobby[id] || {};
-        if(q && !roomText(id,r,lobby).toLowerCase().includes(q)) return false;
-        const count = roomCount(r);
-        if(filter === "open") return count < 2 && !isRoomOld(r);
-        if(filter === "full") return count >= 2;
-        if(filter === "private") return isPrivateRoom(r,lobby);
-        if(filter === "old") return isRoomOld(r);
-        return true;
-      });
-
-      arr.sort((a,b) => {
-        if(sort === "old") return +(a[1]?.meta?.updated || 0) - +(b[1]?.meta?.updated || 0);
-        if(sort === "players") return roomCount(b[1]) - roomCount(a[1]);
-        return +(b[1]?.meta?.updated || 0) - +(a[1]?.meta?.updated || 0);
-      });
-
-      $("roomsBody").innerHTML = arr.map(([id,r]) => {
-        const lobby = state.lobby[id] || {};
-        const meta = r?.meta || {};
-        const count = roomCount(r);
-        const old = isRoomOld(r);
-        const privateRoom = isPrivateRoom(r,lobby);
-        const name = lobby.name || lobby.roomName || meta.name || meta.roomName || id;
-        const host = lobby.hostNick || meta.host || meta.hostNick || meta.hostAuthUid || "sem criador";
-        const status = old ? `<span class="pill warn">MORTA</span>` :
-          count >= 2 ? `<span class="pill on">2/2</span>` :
-          `<span class="pill">${count}/2</span>`;
-        const lock = privateRoom ? `<span class="pill lock">🔒 Privada</span>` : `<span class="pill">Pública</span>`;
-
-        return `<tr>
-          <td><b>${esc(name)}</b><br>${lock}</td>
-          <td>${status}</td>
-          <td><code>${esc(id)}</code></td>
-          <td>${esc(host)}</td>
-          <td>${age(meta.updated || lobby.updatedAt || lobby.updated)}</td>
-          <td>
-            <div class="row">
-              <button class="red" onclick="deleteRoom('${esc(id)}')">Apagar</button>
-              <button class="orange" onclick="kickAllFromRoom('${esc(id)}')">Esvaziar</button>
-            </div>
-          </td>
-        </tr>`;
-      }).join("") || `<tr><td colspan="6"><div class="empty">Nenhuma sala encontrada.</div></td></tr>`;
-    }
-
-    function renderPlayers(){
-      const q = $("playerSearch")?.value?.trim().toLowerCase() || "";
-      const filter = $("playerFilter")?.value || "all";
-      const sort = $("playerSort")?.value || "recent";
-
-      let arr = Object.entries(state.players).filter(([id,v]) => {
-        const txt = (id + " " + (v?.nick || "") + " " + (v?.nickKey || "")).toLowerCase();
-        if(q && !txt.includes(q)) return false;
-        if(filter === "online") return isFresh(v);
-        if(filter === "ghost") return isGhost(v);
-        if(filter === "offline") return !isFresh(v) && !isGhost(v);
-        return true;
-      });
-
-      arr.sort((a,b) => {
-        const av = a[1] || {}, bv = b[1] || {};
-        if(sort === "old") return (+av.lastSeen || 0) - (+bv.lastSeen || 0);
-        if(sort === "nick") return String(av.nick || "").localeCompare(String(bv.nick || ""));
-        return (+bv.lastSeen || 0) - (+av.lastSeen || 0);
-      });
-
-      $("playersBody").innerHTML = arr.map(([id,v]) => {
-        v = v || {};
-        const fresh = isFresh(v);
-        const ghost = isGhost(v);
-        const cls = fresh ? "on" : ghost ? "warn" : "off";
-        const label = fresh ? "ON" : ghost ? "FANTASMA" : "OFF";
-        return `<tr>
-          <td><span class="pill ${cls}">${label}</span></td>
-          <td>${esc(v.nick || "sem nick")}</td>
-          <td><code>${esc(id)}</code></td>
-          <td>${age(v.lastSeen)}</td>
-          <td>
-            <div class="row">
-              <button class="orange" onclick="setOffline('${esc(id)}')">OFF</button>
-              <button class="red" onclick="deletePlayer('${esc(id)}','${esc(v.nickKey || "")}')">Apagar</button>
-              <button class="red" onclick="banUid('${esc(id)}','banido pelo painel')">Banir</button>
-            </div>
-          </td>
-        </tr>`;
-      }).join("") || `<tr><td colspan="5"><div class="empty">Nenhum jogador encontrado.</div></td></tr>`;
-    }
-
-    function renderNicks(){
-      const arr = Object.entries(state.nicks).sort((a,b)=>a[0].localeCompare(b[0]));
-      $("nicksBody").innerHTML = arr.map(([nick,uid]) => {
-        const p = state.players[uid];
-        const st = p ? "lastSeen: " + age(p.lastSeen) : "órfão/sem presença";
-        return `<tr>
-          <td>${esc(nick)}</td>
-          <td><code>${esc(uid)}</code></td>
-          <td>${esc(st)}</td>
-          <td><button class="red" onclick="deleteNick('${esc(nick)}')">Liberar</button></td>
-        </tr>`;
-      }).join("") || `<tr><td colspan="4"><div class="empty">Nenhum nick.</div></td></tr>`;
-    }
-
-    function renderDiagnostics(){
-      const roomsCount = Object.keys(state.rooms).length;
-      const playersCount = Object.keys(state.players).length;
-      const nicksCount = Object.keys(state.nicks).length;
-      const lobbyCount = Object.keys(state.lobby).length;
-      const logsCount = Object.values(state.logs).reduce((sum,box)=>sum + Object.keys(box || {}).length,0);
-
-      $("dbDiagnostic").innerHTML = [
-        ["rooms", roomsCount],
-        ["roomsLobby", lobbyCount],
-        ["playersOnline", playersCount],
-        ["nicks", nicksCount],
-        ["adminLogs", logsCount],
-        ["bans", Object.keys(state.bans).length]
-      ].map(([k,v]) => `<div class="kpiItem"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("");
-    }
-
-    function renderBans(){
-      const arr = Object.entries(state.bans || {}).sort((a,b)=>(+b[1]?.at||0)-(+a[1]?.at||0));
-      $("bansBody").innerHTML = arr.map(([uid,b]) => `<tr>
-        <td><code>${esc(uid)}</code></td>
-        <td>${esc(b?.reason || "")}</td>
-        <td>${age(b?.at)}</td>
-        <td><button class="green" onclick="unbanUid('${esc(uid)}')">Desbanir</button></td>
-      </tr>`).join("") || `<tr><td colspan="4"><div class="empty">Nenhum banido.</div></td></tr>`;
-    }
-
-    function renderLogs(){
-      const all = [];
-      Object.entries(state.logs || {}).forEach(([admin,box]) => {
-        Object.entries(box || {}).forEach(([id,log]) => all.push({id,admin,...log}));
-      });
-      all.sort((a,b)=>(+b.at||0)-(+a.at||0));
-      $("logsBody").innerHTML = all.slice(0,200).map(l => `<tr>
-        <td>${esc(l.action)}</td>
-        <td>${esc(l.target)}</td>
-        <td><code>${esc(l.adminEmail || l.adminUid || l.admin)}</code></td>
-        <td>${age(l.at)}</td>
-      </tr>`).join("") || `<tr><td colspan="4"><div class="empty">Sem logs ainda.</div></td></tr>`;
-    }
-
-    function guard(msg){
-      if(!isAdmin){
-        alert("Sem permissão ADM.");
-        return false;
-      }
-      return confirm(msg || "Confirmar ação ADM?");
-    }
-
-    async function setOffline(uid){
-      if(!guard("Marcar jogador como offline?")) return;
-      await update(social("playersOnline/" + uid), {
-        online:false,
-        lastSeen:serverTimestamp(),
-        adminMark:MARK
-      });
-      await logAction("setOffline", uid);
-      await loadAll(true);
-    }
-
-    async function deleteNick(nick){
-      if(!guard("Liberar este nick?")) return;
-      await remove(social("nicks/" + nick));
-      await logAction("deleteNick", nick);
-      await loadAll(true);
-    }
-
-    async function deletePlayer(uid,nickKey){
-      if(!guard("Apagar presença/jogador social?")) return;
-      const up = {};
-      up["rooms/_social/playersOnline/" + uid] = null;
-      if(nickKey) up["rooms/_social/nicks/" + nickKey] = null;
-      up["rooms/_social/friends/" + uid] = null;
-      up["rooms/_social/friendRequests/" + uid] = null;
-      up["rooms/_social/roomInvites/" + uid] = null;
-      Object.keys(state.players).forEach(other => {
-        up["rooms/_social/friends/" + other + "/" + uid] = null;
-        up["rooms/_social/friendRequests/" + other + "/" + uid] = null;
-      });
-      await update(ref(db), up);
-      await logAction("deletePlayer", uid);
-      await loadAll(true);
-    }
-
-    async function deleteRoom(roomId){
-      if(!guard("Apagar esta sala?")) return;
-      const up = {};
-      up["rooms/" + roomId] = null;
-      up["roomsLobby/" + roomId] = null;
-      await update(ref(db), up);
-      await logAction("deleteRoom", roomId);
-      await loadAll(true);
-    }
-
-    async function kickAllFromRoom(roomId){
-      if(!guard("Esvaziar jogadores desta sala?")) return;
-      await update(ref(db), {
-        ["rooms/" + roomId + "/players"]: null,
-        ["rooms/" + roomId + "/meta/updated"]: Date.now(),
-        ["roomsLobby/" + roomId + "/playersCount"]: 0,
-        ["roomsLobby/" + roomId + "/updatedAt"]: Date.now()
-      });
-      await logAction("kickAllFromRoom", roomId);
-      await loadAll(true);
-    }
-
-    async function cleanGhosts(){
-      if(!guard("Limpar online fantasma com mais de 10 minutos?")) return;
-      const up = {};
-      Object.entries(state.players).forEach(([uid,v]) => {
-        if(isGhost(v)){
-          up["rooms/_social/playersOnline/" + uid + "/online"] = false;
-          up["rooms/_social/playersOnline/" + uid + "/adminMark"] = MARK;
-        }
-      });
-      await update(ref(db), up);
-      await logAction("cleanGhosts", Object.keys(up).length);
-      await loadAll(true);
-    }
-
-    async function cleanOldRooms(){
-      if(!guard("Apagar salas mortas há mais de 30 minutos?")) return;
-      const up = {};
-      Object.entries(state.rooms).forEach(([id,r]) => {
-        if(isRoomOld(r)){
-          up["rooms/" + id] = null;
-          up["roomsLobby/" + id] = null;
-        }
-      });
-      await update(ref(db), up);
-      await logAction("cleanOldRooms", Object.keys(up).length);
-      await loadAll(true);
-    }
-
-    async function cleanWaitingRooms(){
-      if(!guard("Apagar salas em espera há mais de 5 minutos?")) return;
-      const up = {};
-      Object.entries(state.rooms).forEach(([id,r]) => {
-        if(isWaitingOld(r)){
-          up["rooms/" + id] = null;
-          up["roomsLobby/" + id] = null;
-        }
-      });
-      await update(ref(db), up);
-      await logAction("cleanWaitingRooms", Object.keys(up).length);
-      await loadAll(true);
-    }
-
-    async function cleanInactive10(){
-      if(!guard("Apagar jogadores/nicks inativos há mais de 10 dias?")) return;
-      const limit = now() - INACTIVE_LIMIT;
-      const up = {};
-      Object.entries(state.players).forEach(([uid,v]) => {
-        if((+v?.lastSeen || 0) && (+v.lastSeen) < limit){
-          up["rooms/_social/playersOnline/" + uid] = null;
-          if(v.nickKey) up["rooms/_social/nicks/" + v.nickKey] = null;
-          up["rooms/_social/friends/" + uid] = null;
-          up["rooms/_social/friendRequests/" + uid] = null;
-          up["rooms/_social/roomInvites/" + uid] = null;
-        }
-      });
-      await update(ref(db), up);
-      await logAction("cleanInactive10", Object.keys(up).length);
-      await loadAll(true);
-    }
-
-    async function closeAllRooms(){
-      if(!guard("FECHAR TODAS as salas abertas?")) return;
-      const up = {};
-      Object.keys(state.rooms).forEach(id => up["rooms/" + id] = null);
-      Object.keys(state.lobby).forEach(id => up["roomsLobby/" + id] = null);
-      await update(ref(db), up);
-      await logAction("closeAllRooms", Object.keys(up).length);
-      await loadAll(true);
-    }
-
-    async function wipeLobby(){
-      if(!guard("Limpar roomsLobby antigo?")) return;
-      await remove(ref(db, "roomsLobby"));
-      await logAction("wipeLobby", "roomsLobby");
-      await loadAll(true);
-    }
-
-    async function banUid(uid, reason){
-      if(!uid) uid = $("banUidInput").value.trim();
-      if(!reason) reason = $("banReasonInput").value.trim() || "banido pelo painel";
-      if(!uid) return alert("Informe um UID.");
-      if(!guard("Banir UID " + uid + "?")) return;
-      await set(ref(db, "bans/" + uid), {
-        reason,
-        at: Date.now(),
-        by: currentUser.uid,
-        byEmail: currentUser.email || "",
-        mark: MARK
-      });
-      await logAction("banUid", uid, {reason});
-      await loadAll(true);
-    }
-
-    async function unbanUid(uid){
-      if(!guard("Desbanir UID?")) return;
-      await remove(ref(db, "bans/" + uid));
-      await logAction("unbanUid", uid);
-      await loadAll(true);
-    }
-
-    function exportJson(){
-      const data = {
-        exportedAt: new Date().toISOString(),
-        exportedBy: currentUser?.email || currentUser?.uid || "",
-        rooms: state.rooms,
-        roomsLobby: state.lobby,
-        playersOnline: state.players,
-        nicks: state.nicks,
-        bans: state.bans,
-        logs: state.logs
+    function snapshot() {
+      return {
+        panelCount: state.panelCount,
+        selected: state.selected,
+        stampTarget: state.stampTarget,
+        panels: state.panels.map(clonePanel),
+        rows: state.rows.map(r => ({ ...r }))
       };
-      const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "mundo-magico-admin-backup-" + new Date().toISOString().slice(0,10) + ".json";
+    }
+
+    function restore(snap) {
+      state.panelCount = snap.panelCount;
+      state.selected = Math.min(snap.selected, state.panelCount - 1);
+      state.stampTarget = snap.stampTarget;
+      state.panels = snap.panels.map(clonePanel);
+      state.rows = snap.rows.map(r => ({ ...r }));
+      if (state.stampTarget !== 'none' && Number(state.stampTarget) >= state.panelCount) state.stampTarget = 'none';
+      closeEditor();
+      syncUI();
+      draw();
+    }
+
+    function commitHistory() {
+      const snap = snapshot();
+      history = history.slice(0, historyIndex + 1);
+      history.push(snap);
+      if (history.length > 80) history.shift();
+      historyIndex = history.length - 1;
+      updateHistoryButtons();
+    }
+
+    function undo() {
+      if (historyIndex <= 0) return;
+      historyIndex -= 1;
+      restore(history[historyIndex]);
+      updateHistoryButtons();
+      showToast('Voltou uma ação');
+    }
+
+    function redo() {
+      if (historyIndex >= history.length - 1) return;
+      historyIndex += 1;
+      restore(history[historyIndex]);
+      updateHistoryButtons();
+      showToast('Avançou uma ação');
+    }
+
+    function updateHistoryButtons() {
+      els.undoBtn.disabled = historyIndex <= 0;
+      els.redoBtn.disabled = historyIndex >= history.length - 1;
+    }
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add('active');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => els.toast.classList.remove('active'), 1450);
+    }
+
+    function getSize() {
+      return state.panelCount === 2 ? { w: 1920, h: 1080 } : { w: 1920, h: 1920 };
+    }
+
+    function getCell(index, W, H) {
+      const rows = state.panelCount / 2;
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const w = W / 2;
+      const h = H / rows;
+      return { x: col * w, y: row * h, w, h, row, col };
+    }
+
+    function draw(exportMode = false, withStamp = false) {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => render(els.canvas, exportMode, withStamp));
+    }
+
+    function render(canvas, exportMode = false, withStamp = false) {
+      const { w: W, h: H } = getSize();
+      canvas.width = W;
+      canvas.height = H;
+      canvas.style.aspectRatio = W + ' / ' + H;
+      const ctx = canvas.getContext('2d');
+      if (!exportMode) hitAreas = [];
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = C.black;
+      ctx.fillRect(0, 0, W, H);
+
+      for (let i = 0; i < state.panelCount; i++) {
+        drawPanel(ctx, i, W, H, exportMode);
+      }
+
+      if (withStamp && state.stampTarget !== 'none') {
+        const target = Number(state.stampTarget);
+        if (target >= 0 && target < state.panelCount) {
+          const cell = getCell(target, W, H);
+          const topBarH = Math.floor(cell.h * 0.115);
+          const infoH = Math.floor(cell.h * 0.145);
+          const imageArea = { x: cell.x, y: cell.y + topBarH, w: cell.w, h: cell.h - topBarH - infoH };
+          drawTerminated(ctx, imageArea);
+        }
+      }
+
+      if (!exportMode) drawSelection(ctx, W, H);
+    }
+
+    function drawPanel(ctx, index, W, H, exportMode) {
+      const cell = getCell(index, W, H);
+      const panel = state.panels[index];
+      const topBarH = Math.floor(cell.h * 0.115);
+      const infoH = Math.floor(cell.h * 0.145);
+      const imageArea = { x: cell.x, y: cell.y + topBarH, w: cell.w, h: cell.h - topBarH - infoH };
+      const bottomY = cell.y + cell.h - infoH;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(cell.x, cell.y, cell.w, cell.h);
+      ctx.clip();
+
+      ctx.fillStyle = index % 2 === 0 ? C.top : C.top2;
+      ctx.fillRect(cell.x, cell.y, cell.w, topBarH);
+
+      if (panel.img) {
+        if (!panel.color) ctx.filter = 'grayscale(100%) contrast(112%)';
+        coverDraw(ctx, panel.img, imageArea, panel);
+        ctx.filter = 'none';
+      } else {
+        ctx.fillStyle = index % 2 === 0 ? C.empty : C.cyan;
+        ctx.fillRect(imageArea.x, imageArea.y, imageArea.w, imageArea.h);
+        if (!exportMode) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(255,255,255,.68)';
+          ctx.font = Math.floor(cell.h * 0.036) + 'px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Carregue a imagem ' + (index + 1), imageArea.x + imageArea.w / 2, imageArea.y + imageArea.h / 2);
+          ctx.restore();
+        }
+      }
+
+      ctx.fillStyle = C.top;
+      ctx.globalAlpha = 0.96;
+      ctx.fillRect(cell.x, bottomY, cell.w, infoH);
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = C.white;
+      drawSingleLine(ctx, panel.topLabel, cell.x + cell.w * 0.035, cell.y + topBarH / 2, Math.floor(topBarH * 0.43), fontPrimary, 'left', 'middle', `p${index}.topLabel`, 'Texto superior ' + (index + 1), exportMode);
+
+      if (index % 2 === 0) {
+        const threat = state.rows[cell.row].threat;
+        drawSingleLine(ctx, threat, cell.x + cell.w * 0.965, cell.y + topBarH / 2, Math.floor(topBarH * 0.25), fontMono, 'right', 'middle', `r${cell.row}.threat`, 'Classificação linha ' + (cell.row + 1), exportMode);
+      }
+
+      drawSingleLine(ctx, panel.title, cell.x + cell.w * 0.5, bottomY + infoH * 0.43, Math.floor(infoH * 0.36), fontPrimary, 'center', 'alphabetic', `p${index}.title`, 'Título imagem ' + (index + 1), exportMode);
+      drawWrapped(ctx, panel.subtitle, cell.x + cell.w * 0.5, bottomY + infoH * 0.68, cell.w * 0.9, Math.floor(infoH * 0.18), Math.floor(infoH * 0.19), fontMono, `p${index}.subtitle`, 'Subtítulo imagem ' + (index + 1), exportMode);
+
+      ctx.strokeStyle = 'rgba(0,0,0,.24)';
+      ctx.lineWidth = Math.max(2, W * 0.0012);
+      ctx.strokeRect(cell.x, cell.y, cell.w, cell.h);
+      ctx.restore();
+    }
+
+    function coverDraw(ctx, img, area, panel) {
+      const baseScale = Math.max(area.w / img.width, area.h / img.height);
+      const scale = baseScale * panel.zoom;
+      const dw = img.width * scale;
+      const dh = img.height * scale;
+      const dx = area.x + (area.w - dw) / 2 + panel.x;
+      const dy = area.y + (area.h - dh) / 2 + panel.y;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(area.x, area.y, area.w, area.h);
+      ctx.clip();
+      ctx.drawImage(img, dx, dy, dw, dh);
+      ctx.restore();
+    }
+
+    function drawSingleLine(ctx, rawText, x, y, size, font, align, baseline, field, label, exportMode) {
+      const isEmpty = !rawText;
+      const text = isEmpty && !exportMode ? 'Clique para escrever' : rawText;
+      ctx.save();
+      ctx.font = size + 'px ' + font;
+      ctx.textAlign = align;
+      ctx.textBaseline = baseline;
+      ctx.fillStyle = isEmpty ? C.muted : C.white;
+      if (text) ctx.fillText(text, x, y);
+      if (!exportMode) {
+        const width = Math.max(ctx.measureText(text || 'Clique para escrever').width, size * 7.5);
+        const height = size * 1.35;
+        let left = x;
+        if (align === 'center') left = x - width / 2;
+        if (align === 'right') left = x - width;
+        const top = baseline === 'middle' ? y - height / 2 : y - height;
+        hitAreas.push({ field, label, rect: { x: left - 8, y: top - 6, w: width + 16, h: height + 12 } });
+      }
+      ctx.restore();
+    }
+
+    function drawWrapped(ctx, rawText, x, y, maxWidth, size, lineHeight, font, field, label, exportMode) {
+      const isEmpty = !rawText;
+      const text = isEmpty && !exportMode ? 'Clique para escrever' : rawText;
+      ctx.save();
+      ctx.font = size + 'px ' + font;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = isEmpty ? C.muted : C.white;
+
+      const lines = wrapLines(ctx, text || '', maxWidth);
+      lines.slice(0, 2).forEach((line, idx) => ctx.fillText(line, x, y + idx * lineHeight));
+
+      if (!exportMode) {
+        const drawn = lines.slice(0, 2);
+        const width = Math.max(...drawn.map(line => ctx.measureText(line).width), size * 9);
+        const height = Math.max(lineHeight, drawn.length * lineHeight);
+        hitAreas.push({ field, label, rect: { x: x - width / 2 - 8, y: y - size - 6, w: width + 16, h: height + 14 } });
+      }
+      ctx.restore();
+    }
+
+    function wrapLines(ctx, text, maxWidth) {
+      if (!text) return [''];
+      const words = String(text).split(/\s+/).filter(Boolean);
+      const lines = [];
+      let line = '';
+      for (const word of words) {
+        const test = line ? line + ' ' + word : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = test;
+        }
+      }
+      if (line) lines.push(line);
+      return lines.length ? lines : [''];
+    }
+
+    function drawTerminated(ctx, area) {
+      const bandH = Math.floor(area.h * 0.15);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(area.x, area.y, area.w, area.h);
+      ctx.clip();
+      ctx.translate(area.x + area.w / 2, area.y + area.h / 2);
+      ctx.rotate(-12 * Math.PI / 180);
+      ctx.fillStyle = C.red;
+      ctx.fillRect(-area.w, -bandH / 2, area.w * 2, bandH);
+      ctx.strokeStyle = 'rgba(0,0,0,.32)';
+      ctx.lineWidth = Math.max(6, area.w * 0.008);
+      ctx.strokeRect(-area.w, -bandH / 2, area.w * 2, bandH);
+      ctx.fillStyle = C.white;
+      ctx.font = Math.floor(bandH * 0.58) + 'px ' + fontPrimary;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('TERMINATED', 0, 0);
+      ctx.restore();
+    }
+
+    function drawSelection(ctx, W, H) {
+      const cell = getCell(state.selected, W, H);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(112, 192, 204, .9)';
+      ctx.lineWidth = Math.max(5, W * 0.003);
+      ctx.setLineDash([18, 12]);
+      ctx.strokeRect(cell.x + 8, cell.y + 8, cell.w - 16, cell.h - 16);
+      ctx.restore();
+    }
+
+    function pointFromEvent(evt) {
+      const rect = els.canvas.getBoundingClientRect();
+      const clientX = evt.clientX ?? evt.touches?.[0]?.clientX;
+      const clientY = evt.clientY ?? evt.touches?.[0]?.clientY;
+      return {
+        x: (clientX - rect.left) * (els.canvas.width / rect.width),
+        y: (clientY - rect.top) * (els.canvas.height / rect.height),
+        clientX,
+        clientY
+      };
+    }
+
+    function hitText(x, y) {
+      for (let i = hitAreas.length - 1; i >= 0; i--) {
+        const h = hitAreas[i];
+        if (x >= h.rect.x && x <= h.rect.x + h.rect.w && y >= h.rect.y && y <= h.rect.y + h.rect.h) return h;
+      }
+      return null;
+    }
+
+    function panelAt(x, y) {
+      const { w: W, h: H } = getSize();
+      for (let i = 0; i < state.panelCount; i++) {
+        const cell = getCell(i, W, H);
+        if (x >= cell.x && x <= cell.x + cell.w && y >= cell.y && y <= cell.y + cell.h) return i;
+      }
+      return 0;
+    }
+
+    function getText(field) {
+      if (field.startsWith('p')) {
+        const [, i, key] = field.match(/^p(\d+)\.(.+)$/);
+        return state.panels[Number(i)][key] || '';
+      }
+      const [, row] = field.match(/^r(\d+)\.threat$/);
+      return state.rows[Number(row)].threat || '';
+    }
+
+    function setText(field, value) {
+      if (field.startsWith('p')) {
+        const [, i, key] = field.match(/^p(\d+)\.(.+)$/);
+        state.panels[Number(i)][key] = value;
+      } else {
+        const [, row] = field.match(/^r(\d+)\.threat$/);
+        state.rows[Number(row)].threat = value;
+      }
+    }
+
+    function openEditor(hit, evt) {
+      editingField = hit.field;
+      els.editLabel.textContent = hit.label;
+      els.editInput.value = getText(hit.field);
+
+      const wrapRect = els.canvasWrap.getBoundingClientRect();
+      const clientX = evt.clientX ?? evt.touches?.[0]?.clientX;
+      const clientY = evt.clientY ?? evt.touches?.[0]?.clientY;
+      const popW = Math.min(330, wrapRect.width - 28);
+      let left = clientX - wrapRect.left + 12;
+      let top = clientY - wrapRect.top + 12;
+      left = Math.max(14, Math.min(left, wrapRect.width - popW - 14));
+      top = Math.max(14, Math.min(top, wrapRect.height - 150));
+
+      els.editPopover.style.left = left + 'px';
+      els.editPopover.style.top = top + 'px';
+      els.editPopover.classList.add('active');
+      setTimeout(() => els.editInput.focus(), 20);
+    }
+
+    function closeEditor() {
+      editingField = null;
+      els.editPopover.classList.remove('active');
+    }
+
+    function saveEditor(clear = false) {
+      if (!editingField) return;
+      const next = clear ? '' : els.editInput.value.trim();
+      if (getText(editingField) !== next) {
+        setText(editingField, next);
+        commitHistory();
+        draw();
+        showToast(clear ? 'Texto apagado' : 'Texto salvo');
+      }
+      closeEditor();
+    }
+
+    function loadImageFromFile(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => resolve({ img, url });
+        img.onerror = () => reject(new Error('Não foi possível carregar a imagem'));
+        img.src = url;
+      });
+    }
+
+    async function handleFile(index, file) {
+      if (!file) return;
+      try {
+        const loaded = await loadImageFromFile(file);
+        const oldUrl = state.panels[index].url;
+        if (oldUrl) URL.revokeObjectURL(oldUrl);
+        Object.assign(state.panels[index], {
+          file,
+          img: loaded.img,
+          url: loaded.url,
+          fileName: file.name,
+          x: 0,
+          y: 0,
+          zoom: 1
+        });
+        state.selected = index;
+        commitHistory();
+        syncUI();
+        draw();
+        showToast('Imagem ' + (index + 1) + ' carregada');
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    function setPanelCount(count) {
+      if (state.panelCount === count) return;
+      state.panelCount = count;
+      state.selected = Math.min(state.selected, count - 1);
+      if (state.stampTarget !== 'none' && Number(state.stampTarget) >= count) state.stampTarget = 'none';
+      commitHistory();
+      syncUI();
+      draw();
+      showToast(count === 4 ? 'Formato 4 imagens ativado' : 'Formato 2 imagens ativado');
+    }
+
+    function selectPanel(index) {
+      if (index >= state.panelCount) return;
+      state.selected = index;
+      syncUI();
+      draw();
+    }
+
+    function syncUI() {
+      els.twoModeBtn.classList.toggle('active', state.panelCount === 2);
+      els.fourModeBtn.classList.toggle('active', state.panelCount === 4);
+
+      els.uploadBoxes.forEach((box, i) => box.classList.toggle('hidden', i >= state.panelCount));
+      els.imageChips.forEach((chip, i) => {
+        chip.classList.toggle('hidden', i >= state.panelCount);
+        chip.classList.toggle('active', i === state.selected);
+      });
+
+      for (let i = 0; i < 4; i++) {
+        els.fileNames[i].textContent = state.panels[i].fileName || 'Nenhum arquivo';
+      }
+
+      const panel = state.panels[state.selected];
+      els.zoomLabel.textContent = 'Zoom da imagem ' + (state.selected + 1);
+      els.zoomRange.value = Math.round(panel.zoom * 100);
+      els.colorToggle.checked = panel.color;
+      els.stampTarget.value = state.stampTarget;
+      [...document.querySelectorAll('.stamp-extra')].forEach(opt => {
+        opt.hidden = state.panelCount < 4;
+      });
+
+      updateHistoryButtons();
+    }
+
+    function download(withStamp) {
+      const off = document.createElement('canvas');
+      render(off, true, withStamp);
+      const a = document.createElement('a');
+      const size = getSize();
+      a.href = off.toDataURL('image/png');
+      a.download = withStamp ? `poster_terminated_${size.w}x${size.h}.png` : `poster_${size.w}x${size.h}.png`;
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
-      logAction("exportJson", "backup");
+      a.remove();
+      showToast('Arquivo baixado');
     }
 
-    function copyStats(){
-      const stats = {
-        online: $("sOnline").textContent,
-        ghosts: $("sGhost").textContent,
-        rooms: $("sRooms").textContent,
-        nicks: $("sNicks").textContent,
-        trash: $("sTrash").textContent,
-        at: new Date().toLocaleString()
-      };
-      navigator.clipboard.writeText(JSON.stringify(stats,null,2));
-      toast("Estatísticas copiadas");
+    function setupEvents() {
+      els.twoModeBtn.addEventListener('click', () => setPanelCount(2));
+      els.fourModeBtn.addEventListener('click', () => setPanelCount(4));
+      els.fileInputs.forEach((input, i) => input.addEventListener('change', e => handleFile(i, e.target.files?.[0])));
+      els.imageChips.forEach(chip => chip.addEventListener('click', () => selectPanel(Number(chip.dataset.select))));
+
+      els.zoomRange.addEventListener('input', e => {
+        state.panels[state.selected].zoom = Number(e.target.value) / 100;
+        draw();
+      });
+      els.zoomRange.addEventListener('change', () => commitHistory());
+
+      els.colorToggle.addEventListener('change', e => {
+        state.panels[state.selected].color = e.target.checked;
+        commitHistory();
+        draw();
+      });
+
+      els.centerBtn.addEventListener('click', () => {
+        const p = state.panels[state.selected];
+        p.x = 0;
+        p.y = 0;
+        p.zoom = 1;
+        commitHistory();
+        syncUI();
+        draw();
+        showToast('Imagem centralizada');
+      });
+
+      els.stampTarget.addEventListener('change', e => {
+        state.stampTarget = e.target.value;
+        commitHistory();
+        draw();
+      });
+
+      els.undoBtn.addEventListener('click', undo);
+      els.redoBtn.addEventListener('click', redo);
+      els.downloadNormal.addEventListener('click', () => download(false));
+      els.downloadStamped.addEventListener('click', () => download(true));
+
+      els.saveTextBtn.addEventListener('click', () => saveEditor(false));
+      els.clearTextBtn.addEventListener('click', () => saveEditor(true));
+      els.cancelTextBtn.addEventListener('click', closeEditor);
+
+      els.editInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') saveEditor(false);
+        if (e.key === 'Escape') closeEditor();
+      });
+
+      document.addEventListener('keydown', e => {
+        const isTyping = document.activeElement === els.editInput || ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+        if (isTyping) return;
+        const z = e.key.toLowerCase() === 'z';
+        const y = e.key.toLowerCase() === 'y';
+        if ((e.ctrlKey || e.metaKey) && z && !e.shiftKey) { e.preventDefault(); undo(); }
+        if ((e.ctrlKey || e.metaKey) && (y || (z && e.shiftKey))) { e.preventDefault(); redo(); }
+      });
+
+      els.canvas.addEventListener('pointerdown', e => {
+        const p = pointFromEvent(e);
+        const hit = hitText(p.x, p.y);
+        if (hit) {
+          openEditor(hit, e);
+          return;
+        }
+        closeEditor();
+        const idx = panelAt(p.x, p.y);
+        selectPanel(idx);
+        dragging = { index: idx, x: p.x, y: p.y, moved: false };
+        els.canvas.setPointerCapture?.(e.pointerId);
+        e.preventDefault();
+      });
+
+      els.canvas.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        const p = pointFromEvent(e);
+        const dx = p.x - dragging.x;
+        const dy = p.y - dragging.y;
+        dragging.x = p.x;
+        dragging.y = p.y;
+        if (Math.abs(dx) + Math.abs(dy) > 0.5) dragging.moved = true;
+        const panel = state.panels[dragging.index];
+        panel.x += dx;
+        panel.y += dy;
+        draw();
+      });
+
+      function finishDrag() {
+        if (dragging?.moved) commitHistory();
+        dragging = null;
+      }
+      els.canvas.addEventListener('pointerup', finishDrag);
+      els.canvas.addEventListener('pointercancel', finishDrag);
+      window.addEventListener('resize', () => draw());
     }
 
-    document.querySelectorAll(".tab").forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-        btn.classList.add("active");
-        $(btn.dataset.tab).classList.add("active");
-      };
-    });
-
-    ["roomSearch","roomFilter","roomSort"].forEach(id => $(id).oninput = renderRooms);
-    ["playerSearch","playerFilter","playerSort"].forEach(id => $(id).oninput = () => { renderPlayers(); renderNicks(); });
-
-    $("reloadRoomsBtn").onclick = () => loadAll(true);
-    $("reloadPlayersBtn").onclick = () => loadAll(true);
-    $("reloadLogsBtn").onclick = () => loadAll(true);
-
-    $("quickGhostBtn").onclick = cleanGhosts;
-    $("quickOldRoomsBtn").onclick = cleanOldRooms;
-    $("quickAllRoomsBtn").onclick = closeAllRooms;
-
-    $("cleanGhostBtn").onclick = cleanGhosts;
-    $("cleanOldRoomsBtn").onclick = cleanOldRooms;
-    $("cleanWaitingBtn").onclick = cleanWaitingRooms;
-    $("clean10Btn").onclick = cleanInactive10;
-    $("closeAllRoomsBtn").onclick = closeAllRooms;
-    $("wipeLobbyBtn").onclick = wipeLobby;
-    $("exportBtn").onclick = exportJson;
-    $("copyStatsBtn").onclick = copyStats;
-    $("banBtn").onclick = () => banUid();
-
-    window.setOffline = setOffline;
-    window.deleteNick = deleteNick;
-    window.deletePlayer = deletePlayer;
-    window.deleteRoom = deleteRoom;
-    window.kickAllFromRoom = kickAllFromRoom;
-    window.banUid = banUid;
-    window.unbanUid = unbanUid;
-
-    window.addEventListener("beforeinstallprompt", e => {
-      e.preventDefault();
-      deferredInstallPrompt = e;
-      $("installBtn").style.display = "inline-block";
-    });
-
-    $("installBtn").onclick = async () => {
-      if(!deferredInstallPrompt) return;
-      deferredInstallPrompt.prompt();
-      await deferredInstallPrompt.userChoice;
-      deferredInstallPrompt = null;
-      $("installBtn").style.display = "none";
-    };
-
-    if("serviceWorker" in navigator){
-      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    function init() {
+      setupEvents();
+      commitHistory();
+      syncUI();
+      draw();
     }
+
+    init();
   </script>
 </body>
 </html>
