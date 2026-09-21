@@ -46,6 +46,37 @@ jobs:
           grep -q 'applicationId = "com.toucabr.editor.mobile"' touca-mobile-src/app/build.gradle.kts
           ! grep -R 'android.permission.RECORD_AUDIO' touca-mobile-src/app/src/main/AndroidManifest.xml
 
+      - name: Apply mobile touch compile fixes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          timeline = Path("touca-mobile-src/app/src/main/java/com/toucabr/editor/ui/components/Timeline.kt")
+          s = timeline.read_text()
+          if "import com.toucabr.editor.interaction.TimelineGeometry" not in s:
+              s = s.replace(
+                  "import com.toucabr.editor.interaction.ClipGestureResolver\n",
+                  "import com.toucabr.editor.interaction.ClipGestureResolver\nimport com.toucabr.editor.interaction.TimelineGeometry\n"
+              )
+          s = s.replace(
+              "scroll.scrollTo((newScrollDp * density.density).roundToInt().coerceIn(0, scroll.maxValue))",
+              "scroll.dispatchRawDelta(((newScrollDp * density.density) - scroll.value).toFloat())"
+          )
+          s = s.replace(
+              "if (s % if (pps < 25) 5 else 1 != 0) continue",
+              "if (s % (if (pps < 25) 5 else 1) != 0) continue"
+          )
+          timeline.write_text(s)
+
+          app = Path("touca-mobile-src/app/src/main/java/com/toucabr/editor/ui/ToucaApp.kt")
+          s = app.read_text()
+          marker = "@Composable\nprivate fun HomeScreen("
+          if "@OptIn(ExperimentalMaterial3Api::class)\n@Composable\nprivate fun HomeScreen(" not in s:
+              s = s.replace(marker, "@OptIn(ExperimentalMaterial3Api::class)\n" + marker)
+          app.write_text(s)
+          PY
+
       - name: Restore exact Whisper Tiny assets
         shell: bash
         run: |
