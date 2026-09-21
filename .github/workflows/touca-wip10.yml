@@ -27,6 +27,20 @@ jobs:
 
           root = Path("wip10-build/ToucaEditorAndroid")
 
+          # Media3 marks a number of APIs with AndroidX's UnstableApi annotation.
+          # File-level opt-in keeps compile + lint consistent across all call sites.
+          for rel in [
+              "app/src/main/java/com/toucabr/editor/ui/components/EditorPreview.kt",
+              "app/src/main/java/com/toucabr/editor/EditorViewModel.kt",
+              "app/src/main/java/com/toucabr/editor/ui/ToucaApp.kt",
+          ]:
+              q = root / rel
+              body = q.read_text()
+              annotation = "@file:androidx.media3.common.util.UnstableApi\n\n"
+              if not body.startswith("@file:androidx.media3.common.util.UnstableApi"):
+                  body = annotation + body
+              q.write_text(body)
+
           p = root / "app/src/main/java/com/toucabr/editor/ui/components/EditorPreview.kt"
           s = p.read_text()
           s = s.replace(
