@@ -157,9 +157,9 @@ jobs:
         shell: bash
         run: |
           set +e
-          gradle lintDebug --stacktrace --no-daemon
+          gradle lintRelease --stacktrace --no-daemon
           STATUS=$?
-          REPORT=app/build/intermediates/lint_intermediate_text_report/debug/lintReportDebug/lint-results-debug.txt
+          REPORT=app/build/intermediates/lint_intermediate_text_report/release/lintReportRelease/lint-results-release.txt
           if [ -f "$REPORT" ]; then
             echo "===== FULL LINT REPORT ====="
             cat "$REPORT"
@@ -169,7 +169,7 @@ jobs:
 
       - name: Assemble APK
         working-directory: wip10-build/ToucaEditorAndroid
-        run: gradle assembleDebug --stacktrace --no-daemon
+        run: gradle assembleRelease --stacktrace --no-daemon
 
       - name: Verify APK
         shell: bash
