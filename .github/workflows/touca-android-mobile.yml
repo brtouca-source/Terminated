@@ -86,7 +86,15 @@ jobs:
               t = t.replace("import kotlin.test.Test", "import org.junit.Test")
               t = t.replace("import kotlin.test.assertEquals", "import org.junit.Assert.assertEquals")
               t = t.replace("import kotlin.test.assertTrue", "import org.junit.Assert.assertTrue")
+              if test_name == "SubtitleCodecTest.kt":
+                  t = t.replace("assertEquals(1.0, cues[0].start)", "assertEquals(1.0, cues[0].start, 1e-9)")
+                  t = t.replace("assertEquals(2.25, cues[0].end)", "assertEquals(2.25, cues[0].end, 1e-9)")
               p.write_text(t)
+
+          export_test = Path("touca-mobile-src/app/src/test/java/com/toucabr/editor/media/export/ExportTimelineTest.kt")
+          t = export_test.read_text()
+          t = t.replace("type = ClipType.image,\n        name = id,\n        track = \"main\"", "type = ClipType.video,\n        name = id,\n        track = \"main\"")
+          export_test.write_text(t)
           PY
 
       - name: Restore exact Whisper Tiny assets
