@@ -22,6 +22,82 @@ jobs:
             cp -a .wip10/overrides/. wip10-build/ToucaEditorAndroid/
           fi
 
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root = Path("wip10-build/ToucaEditorAndroid")
+
+          p = root / "app/src/main/java/com/toucabr/editor/ui/components/EditorPreview.kt"
+          s = p.read_text()
+          s = s.replace(
+              "@OptIn(androidx.media3.common.util.UnstableApi::class)\n@Composable\nprivate fun AudioPreviewLayer",
+              "@androidx.media3.common.util.UnstableApi\n@Composable\nprivate fun AudioPreviewLayer",
+          )
+          p.write_text(s)
+
+          p = root / "app/src/main/java/com/toucabr/editor/EditorViewModel.kt"
+          s = p.read_text()
+          s = s.replace(
+              "@OptIn(UnstableApi::class)\n    fun exportProject()",
+              "@UnstableApi\n    fun exportProject()",
+          )
+          p.write_text(s)
+
+          p = root / "app/src/main/AndroidManifest.xml"
+          s = p.read_text()
+          if "android.permission.POST_NOTIFICATIONS" not in s:
+              s = s.replace(
+                  '<uses-permission android:name="android.permission.RECORD_AUDIO" />',
+                  '<uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />',
+              )
+          p.write_text(s)
+
+          p = root / "app/src/main/java/com/toucabr/editor/service/ExportForegroundService.kt"
+          s = p.read_text()
+          if "import android.Manifest" not in s:
+              s = s.replace("import android.app.NotificationChannel", "import android.Manifest\nimport android.app.NotificationChannel")
+          if "import android.content.pm.PackageManager" not in s:
+              s = s.replace("import android.content.pm.ServiceInfo", "import android.content.pm.PackageManager\nimport android.content.pm.ServiceInfo")
+          if "import android.os.Build" not in s:
+              s = s.replace("import android.os.IBinder", "import android.os.Build\nimport android.os.IBinder")
+          if "import androidx.core.content.ContextCompat" not in s:
+              s = s.replace("import androidx.core.app.ServiceCompat", "import androidx.core.app.ServiceCompat\nimport androidx.core.content.ContextCompat")
+          old = '''    private fun updateNotification(progress: Int, text: String, ongoing: Boolean = true) {
+              getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification(progress, text, ongoing))
+          }'''
+          new = '''    private fun updateNotification(progress: Int, text: String, ongoing: Boolean = true) {
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                  ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+              ) return
+              getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification(progress, text, ongoing))
+          }'''
+          if old not in s:
+              raise SystemExit("ExportForegroundService updateNotification contract not found")
+          s = s.replace(old, new)
+          p.write_text(s)
+
+          p = root / "app/src/main/java/com/toucabr/editor/MainActivity.kt"
+          s = p.read_text()
+          if "ActivityResultContracts" not in s:
+              s = s.replace("package com.toucabr.editor\n\nimport android.os.Bundle", "package com.toucabr.editor\n\nimport android.Manifest\nimport android.content.pm.PackageManager\nimport android.os.Build\nimport android.os.Bundle")
+              s = s.replace("import androidx.activity.ComponentActivity", "import androidx.activity.ComponentActivity\nimport androidx.activity.result.contract.ActivityResultContracts")
+              s = s.replace("import androidx.activity.viewModels", "import androidx.activity.viewModels\nimport androidx.core.content.ContextCompat")
+              s = s.replace(
+                  "    private val viewModel: EditorViewModel by viewModels()",
+                  "    private val viewModel: EditorViewModel by viewModels()\n    private val notificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }",
+              )
+              s = s.replace(
+                  "        enableEdgeToEdge()",
+                  """        enableEdgeToEdge()
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                      ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                  ) {
+                      notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                  }""",
+              )
+          p.write_text(s)
+          PY
+
           cd wip10-build/ToucaEditorAndroid
           mkdir -p app/src/main/assets/whisper
 
