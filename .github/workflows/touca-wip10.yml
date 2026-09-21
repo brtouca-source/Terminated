@@ -171,24 +171,24 @@ jobs:
         working-directory: wip10-build/ToucaEditorAndroid
         run: gradle assembleRelease --stacktrace --no-daemon
 
-      - name: Verify APK
+      - name: Verify unsigned release APK
         shell: bash
         run: |
-          APK=wip10-build/ToucaEditorAndroid/app/build/outputs/apk/debug/app-debug.apk
+          APK=wip10-build/ToucaEditorAndroid/app/build/outputs/apk/release/app-release-unsigned.apk
           test -f "$APK"
-          "$ANDROID_SDK_ROOT/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK"
           unzip -t "$APK"
           ls -lh "$APK"
-          sha256sum "$APK" > ToucaEditor-WIP10-debug.apk.sha256
-          cp "$APK" ToucaEditor-WIP10-debug.apk
+          sha256sum "$APK" > ToucaEditor-WIP10-release-unsigned.apk.sha256
+          cp "$APK" ToucaEditor-WIP10-release-unsigned.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ToucaEditor-WIP10-build
+          name: ToucaEditor-WIP10-release-unsigned
           path: |
-            ToucaEditor-WIP10-debug.apk
-            ToucaEditor-WIP10-debug.apk.sha256
-            wip10-build/ToucaEditorAndroid/app/build/reports/lint-results-debug.html
+            ToucaEditor-WIP10-release-unsigned.apk
+            ToucaEditor-WIP10-release-unsigned.apk.sha256
+            wip10-build/ToucaEditorAndroid/app/build/reports/lint-results-release.html
             wip10-build/ToucaEditorAndroid/app/build/reports/tests/testDebugUnitTest/
           if-no-files-found: error
+          retention-days: 7
           retention-days: 7
