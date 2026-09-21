@@ -17,6 +17,11 @@ jobs:
           set -euo pipefail
           mkdir -p wip10-build/ToucaEditorAndroid
           cat .wip10/source.b64.part-* | base64 -d | tar -xzf - -C wip10-build/ToucaEditorAndroid
+
+          if [ -d .wip10/overrides ]; then
+            cp -a .wip10/overrides/. wip10-build/ToucaEditorAndroid/
+          fi
+
           cd wip10-build/ToucaEditorAndroid
           mkdir -p app/src/main/assets/whisper
 
@@ -28,7 +33,7 @@ jobs:
             "https://huggingface.co/Xenova/whisper-tiny/resolve/${REV}/onnx/decoder_model_merged_quantized.onnx?download=true" \
             -o app/src/main/assets/whisper/decoder_model_merged_quantized.onnx
           curl -fL --retry 4 --retry-delay 2 \
-            "https://huggingface.co/Xenova/whisper-tiny/resolve/${REV}/tokenizer.json?download=true" \
+            "https://huggingface.co/KitsuMate/whisper-tiny-onnx/resolve/main/tokenizer.json?download=true" \
             -o app/src/main/assets/whisper/tokenizer.json
 
           echo "fd9d995b9dcb0520f0dbf6cf68651af639fc385f594d9d876e69ca2802dc438e  app/src/main/assets/whisper/encoder_model_quantized.onnx" | sha256sum -c -
