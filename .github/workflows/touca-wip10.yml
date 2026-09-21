@@ -65,7 +65,18 @@ jobs:
 
       - name: Android lint
         working-directory: wip10-build/ToucaEditorAndroid
-        run: gradle lintDebug --stacktrace --no-daemon
+        shell: bash
+        run: |
+          set +e
+          gradle lintDebug --stacktrace --no-daemon
+          STATUS=$?
+          REPORT=app/build/intermediates/lint_intermediate_text_report/debug/lintReportDebug/lint-results-debug.txt
+          if [ -f "$REPORT" ]; then
+            echo "===== FULL LINT REPORT ====="
+            cat "$REPORT"
+            echo "===== END LINT REPORT ====="
+          fi
+          exit $STATUS
 
       - name: Assemble APK
         working-directory: wip10-build/ToucaEditorAndroid
