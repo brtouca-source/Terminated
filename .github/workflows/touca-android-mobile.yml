@@ -54,7 +54,9 @@ jobs:
           BASE="https://huggingface.co/Xenova/whisper-tiny/resolve/c4eb0c76e35cab5b948da877b438dcd6d91d93f4"
           curl -L --fail --retry 4 "$BASE/onnx/encoder_model_quantized.onnx?download=true" -o encoder_model_quantized.onnx
           curl -L --fail --retry 4 "$BASE/onnx/decoder_model_merged_quantized.onnx?download=true" -o decoder_model_merged_quantized.onnx
-          curl -L --fail --retry 4 "$BASE/tokenizer.json?download=true" -o tokenizer.json
+          cd "$GITHUB_WORKSPACE"
+          cat touca-android-build/tokenizer.b64.part-* | base64 -d > touca-mobile-src/app/src/main/assets/whisper/tokenizer.json
+          cd touca-mobile-src/app/src/main/assets/whisper
           echo "fd9d995b9dcb0520f0dbf6cf68651af639fc385f594d9d876e69ca2802dc438e  encoder_model_quantized.onnx" | sha256sum -c -
           echo "6c0c125986b007d2e3734bec84c18bda0152071b90b87fadac6d7764499927a0  decoder_model_merged_quantized.onnx" | sha256sum -c -
           echo "27fc476bfe7f17299480be2273fc0608e4d5a99aba2ab5dec5374b4482d1a566  tokenizer.json" | sha256sum -c -
