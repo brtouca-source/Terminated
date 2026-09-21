@@ -1,0 +1,87 @@
+name: Touca Editor WIP10 Build
+on:
+  push:
+    branches: [touca-editor-wip10-build]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reconstruct native project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p wip10-build/ToucaEditorAndroid
+          cat .wip10/source.b64.part-* | base64 -d | tar -xzf - -C wip10-build/ToucaEditorAndroid
+          cd wip10-build/ToucaEditorAndroid
+          mkdir -p app/src/main/assets/whisper
+
+          REV=c4eb0c76e35cab5b948da877b438dcd6d91d93f4
+          curl -fL --retry 4 --retry-delay 2 \
+            "https://huggingface.co/Xenova/whisper-tiny/resolve/${REV}/onnx/encoder_model_quantized.onnx?download=true" \
+            -o app/src/main/assets/whisper/encoder_model_quantized.onnx
+          curl -fL --retry 4 --retry-delay 2 \
+            "https://huggingface.co/Xenova/whisper-tiny/resolve/${REV}/onnx/decoder_model_merged_quantized.onnx?download=true" \
+            -o app/src/main/assets/whisper/decoder_model_merged_quantized.onnx
+          curl -fL --retry 4 --retry-delay 2 \
+            "https://huggingface.co/Xenova/whisper-tiny/resolve/${REV}/tokenizer.json?download=true" \
+            -o app/src/main/assets/whisper/tokenizer.json
+
+          echo "fd9d995b9dcb0520f0dbf6cf68651af639fc385f594d9d876e69ca2802dc438e  app/src/main/assets/whisper/encoder_model_quantized.onnx" | sha256sum -c -
+          echo "6c0c125986b007d2e3734bec84c18bda0152071b90b87fadac6d7764499927a0  app/src/main/assets/whisper/decoder_model_merged_quantized.onnx" | sha256sum -c -
+          echo "27fc476bfe7f17299480be2273fc0608e4d5a99aba2ab5dec5374b4482d1a566  app/src/main/assets/whisper/tokenizer.json" | sha256sum -c -
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        shell: bash
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-37" "build-tools;36.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6.1'
+
+      - name: Unit tests
+        working-directory: wip10-build/ToucaEditorAndroid
+        run: gradle testDebugUnitTest --stacktrace --no-daemon
+
+      - name: Android lint
+        working-directory: wip10-build/ToucaEditorAndroid
+        run: gradle lintDebug --stacktrace --no-daemon
+
+      - name: Assemble APK
+        working-directory: wip10-build/ToucaEditorAndroid
+        run: gradle assembleDebug --stacktrace --no-daemon
+
+      - name: Verify APK
+        shell: bash
+        run: |
+          APK=wip10-build/ToucaEditorAndroid/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          apksigner verify --verbose --print-certs "$APK"
+          unzip -t "$APK"
+          ls -lh "$APK"
+          sha256sum "$APK" > ToucaEditor-WIP10-debug.apk.sha256
+          cp "$APK" ToucaEditor-WIP10-debug.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ToucaEditor-WIP10-build
+          path: |
+            ToucaEditor-WIP10-debug.apk
+            ToucaEditor-WIP10-debug.apk.sha256
+            wip10-build/ToucaEditorAndroid/app/build/reports/lint-results-debug.html
+            wip10-build/ToucaEditorAndroid/app/build/reports/tests/testDebugUnitTest/
+          if-no-files-found: error
+          retention-days: 7
