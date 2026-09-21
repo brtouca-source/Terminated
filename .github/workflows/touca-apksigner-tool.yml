@@ -1,0 +1,28 @@
+name: Touca APK Signer Tool
+on:
+  push:
+    branches: [touca-editor-wip10-build]
+  workflow_dispatch:
+
+jobs:
+  package-apksigner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+      - name: Install Build Tools 36
+        shell: bash
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "build-tools;36.0.0"
+          mkdir -p signer/lib
+          cp "$ANDROID_SDK_ROOT/build-tools/36.0.0/apksigner" signer/apksigner
+          cp "$ANDROID_SDK_ROOT/build-tools/36.0.0/lib/apksigner.jar" signer/lib/apksigner.jar
+          chmod +x signer/apksigner
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Android-official-apksigner-36.0.0
+          path: signer/
+          retention-days: 1
