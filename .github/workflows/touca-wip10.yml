@@ -62,18 +62,17 @@ jobs:
               s = s.replace("import android.os.IBinder", "import android.os.Build\nimport android.os.IBinder")
           if "import androidx.core.content.ContextCompat" not in s:
               s = s.replace("import androidx.core.app.ServiceCompat", "import androidx.core.app.ServiceCompat\nimport androidx.core.content.ContextCompat")
-          old = '''    private fun updateNotification(progress: Int, text: String, ongoing: Boolean = true) {
-              getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification(progress, text, ongoing))
-          }'''
+          import re
+          pattern = r'''    private fun updateNotification\(progress: Int, text: String, ongoing: Boolean = true\) \{\n\s*getSystemService\(NotificationManager::class\.java\)\.notify\(NOTIFICATION_ID, notification\(progress, text, ongoing\)\)\n    \}'''
           new = '''    private fun updateNotification(progress: Int, text: String, ongoing: Boolean = true) {
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                   ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
               ) return
               getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification(progress, text, ongoing))
           }'''
-          if old not in s:
+          s, count = re.subn(pattern, new, s, count=1)
+          if count != 1:
               raise SystemExit("ExportForegroundService updateNotification contract not found")
-          s = s.replace(old, new)
           p.write_text(s)
 
           p = root / "app/src/main/java/com/toucabr/editor/MainActivity.kt"
