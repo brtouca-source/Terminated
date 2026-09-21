@@ -19,8 +19,8 @@ Fim
         val cues = SubtitleCodec.parse(srt)
         assertEquals(2, cues.size)
         assertEquals("Olá mundo", cues[0].text)
-        assertEquals(1.0, cues[0].start)
-        assertEquals(2.25, cues[0].end)
+        assertEquals(1.0, cues[0].start, 1e-9)
+        assertEquals(2.25, cues[0].end, 1e-9)
     }
 
     @Test fun exportsStableSrtAndVtt() {
