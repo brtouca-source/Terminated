@@ -67,6 +67,10 @@ jobs:
               "if (s % if (pps < 25) 5 else 1 != 0) continue",
               "if (s % (if (pps < 25) 5 else 1) != 0) continue"
           )
+          s = s.replace(
+              "TimelineGeometry.zoomAroundCursor(oldPps, scale, cursorDp, oldScrollDp)",
+              "TimelineGeometry.zoomAroundCursor(oldPps, scale, cursorDp.toDouble(), oldScrollDp.toDouble())"
+          )
           timeline.write_text(s)
 
           app = Path("touca-mobile-src/app/src/main/java/com/toucabr/editor/ui/ToucaApp.kt")
