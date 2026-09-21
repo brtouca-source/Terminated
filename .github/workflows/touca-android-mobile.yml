@@ -79,6 +79,14 @@ jobs:
           if "@OptIn(ExperimentalMaterial3Api::class)\n@Composable\nprivate fun HomeScreen(" not in s:
               s = s.replace(marker, "@OptIn(ExperimentalMaterial3Api::class)\n" + marker)
           app.write_text(s)
+
+          for test_name in ("ScriptAlignment22Test.kt", "SubtitleCodecTest.kt"):
+              p = Path("touca-mobile-src/app/src/test/java/com/toucabr/editor/media/asr") / test_name
+              t = p.read_text()
+              t = t.replace("import kotlin.test.Test", "import org.junit.Test")
+              t = t.replace("import kotlin.test.assertEquals", "import org.junit.Assert.assertEquals")
+              t = t.replace("import kotlin.test.assertTrue", "import org.junit.Assert.assertTrue")
+              p.write_text(t)
           PY
 
       - name: Restore exact Whisper Tiny assets
